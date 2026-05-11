@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: xcademy
+      MYSQL_DATABASE: challenge_fifa_db
+      MYSQL_USER: hipolito
+      MYSQL_PASSWORD: xcademy
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build: ./backend
+    container_name: nestjs_backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: mysql
+      DB_USER: hipolito
+      DB_PASSWORD: xcademy
+      DB_NAME: challenge_fifa_db
+    depends_on:
+      - mysql
+
+  frontend:
+    build: ./frontend
+    container_name: angular_frontend
+    restart: always
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
