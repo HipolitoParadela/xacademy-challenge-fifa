@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   mysql:
     image: mysql:8.0
@@ -28,6 +26,8 @@ services:
       DB_NAME: challenge_fifa_db
     depends_on:
       - mysql
+    volumes:
+      - ./backend:/app
 
   frontend:
     build: ./frontend
@@ -37,6 +37,23 @@ services:
       - "4200:4200"
     depends_on:
       - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - "81:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: hipolito
+      PMA_PASSWORD: xcademy
+    depends_on:
+      - mysql
+
 
 volumes:
   mysql_data:

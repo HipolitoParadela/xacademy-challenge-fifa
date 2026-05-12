@@ -1,15 +1,22 @@
-FROM node:18-alpine
+# Imagen base
+FROM node:20-bullseye
 
+# Directorio de trabajo
 WORKDIR /app
 
+# Copiamos package.json y package-lock.json
 COPY package*.json ./
+
+RUN npm install -g @angular/cli
+
+# Instalamos dependencias
 RUN npm install
 
+# Copiamos el resto del código
 COPY . .
 
-# Compila la app Angular
-RUN npm run build
-
-# Sirve con Angular CLI (modo dev)
+# Exponemos el puerto de Angular
 EXPOSE 4200
-CMD ["npm", "start"]
+
+# Comando para desarrollo con hot reload
+CMD ["npm", "run", "start"]

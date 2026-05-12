@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "challenge-fifa": {
+    "frontend": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -53,13 +53,18 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular/build:dev-server",
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "buildTarget": "frontend:build:development",
+            "host": "0.0.0.0",
+            "port": 4200
+          },
           "configurations": {
             "production": {
-              "buildTarget": "challenge-fifa:build:production"
+              "buildTarget": "frontend:build:production"
             },
             "development": {
-              "buildTarget": "challenge-fifa:build:development"
+              "buildTarget": "frontend:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -1,0 +1,1 @@
+1 - en la raiz del archivo correr el comando docker-compose up

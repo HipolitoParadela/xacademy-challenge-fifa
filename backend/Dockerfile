@@ -1,14 +1,22 @@
-FROM node:18-alpine
+# Imagen base ligera
+FROM node:20-alpine
 
+# Directorio de trabajo dentro del contenedor
 WORKDIR /app
 
+# Copiamos solo package.json y package-lock.json
 COPY package*.json ./
+
+RUN npm install -g @nestjs/cli
+
+# Instalamos dependencias
 RUN npm install
 
+# Copiamos el resto del código
 COPY . .
 
-# Compila NestJS
-RUN npm run build
-
+# Exponemos el puerto del backend
 EXPOSE 3000
-CMD ["npm", "run", "start:prod"]
+
+# Comando para desarrollo con hot reload
+CMD ["npm", "run", "start:dev"]
