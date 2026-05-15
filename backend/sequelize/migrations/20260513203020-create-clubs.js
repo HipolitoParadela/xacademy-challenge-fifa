@@ -15,6 +15,14 @@ module.exports = {
           allowNull: false,
         },
 
+        external_id: {
+          type: Sequelize.INTEGER,
+
+          allowNull: false,
+
+          unique: true,
+        },
+
         name: {
           type: Sequelize.STRING,
 
