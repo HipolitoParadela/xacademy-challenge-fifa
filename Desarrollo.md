@@ -26,6 +26,12 @@ MEJORAR
     La desición la tomo debido a que concidero mucho mejor tener una sola tabla entre varones y mujeres con sus respectivos datos más personales, y luego utilizar tablas auxiliares para el resto de la informaicón.
 
 2 - Crear archivos de migración de la db. La cual al levantar el docker-compose ya generará las tablas, estructuras y relaciones necesarias para el correcto funcionamiento de la plataforma.
+    tablas:
+        1 - clubs, que contrendrá id y nombre solamente
+        2 - fifa_versions, que contrendrá id, version_number, year
+        3 - players, que contendrá id, name, genero
+        4 - skills, que contendrá id y name
+        5 - player_skills, que contendrá id, player_id, fifa_version_number, skill_id, value 
 
 3 - Endpoint con CRUD de usuarios
 

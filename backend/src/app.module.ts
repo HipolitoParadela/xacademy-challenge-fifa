@@ -38,7 +38,7 @@ import { AuthModule } from './auth/auth.module';
 
         autoLoadModels: true,
 
-        synchronize: true,
+        synchronize: false,
       }),
     }),
 
