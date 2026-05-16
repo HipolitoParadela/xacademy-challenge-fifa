@@ -6,9 +6,7 @@ import {
 } from 'sequelize-typescript';
 
 @Table({
-  tableName: 'player_skills',
-
-  timestamps: true,
+  tableName: 'player_skills', timestamps: false,
 })
 export class PlayerSkill extends Model {
   @Column({

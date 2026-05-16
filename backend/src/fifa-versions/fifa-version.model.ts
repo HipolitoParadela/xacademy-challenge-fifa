@@ -1,14 +1,8 @@
-import {
-  Column,
-  DataType,
-  Model,
-  Table,
-} from 'sequelize-typescript';
+import { Column, DataType, Model, Table } from 'sequelize-typescript';
 
 @Table({
   tableName: 'fifa_versions',
-
-  timestamps: true,
+  timestamps: false,
 })
 export class FifaVersion extends Model {
   @Column({

@@ -7,6 +7,9 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ImportModule } from './import/import.module';
+import { ClubsModule } from './clubs/club.module';
+import { SkillsModule } from './skills/skill.module';
+import { FifaVersionsModule } from './fifa-versions/fifa-versions.module';
 
 @Module({
   imports: [
@@ -43,9 +46,12 @@ import { ImportModule } from './import/import.module';
       }),
     }),
 
-    UsersModule,
     AuthModule,
+    ClubsModule,
+    FifaVersionsModule,
     ImportModule,
+    UsersModule,
+    SkillsModule
   ],
 })
 export class AppModule {}

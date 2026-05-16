@@ -7,7 +7,7 @@ import {
 
 @Table({
   tableName: 'clubs',
-  timestamps: true,
+  timestamps: false,
 })
 export class Club extends Model {
   @Column({

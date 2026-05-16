@@ -1,14 +1,9 @@
-import {
-  Column,
-  DataType,
-  Model,
-  Table,
-} from 'sequelize-typescript';
+import { Column, DataType, Model, Table } from 'sequelize-typescript';
 
 @Table({
   tableName: 'skills',
 
-  timestamps: true,
+  timestamps: false,
 })
 export class Skill extends Model {
   @Column({
@@ -27,5 +22,5 @@ export class Skill extends Model {
 
     allowNull: false,
   })
-  name!: string;
+  declare name: string;
 }

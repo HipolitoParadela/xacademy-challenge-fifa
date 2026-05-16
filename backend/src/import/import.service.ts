@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common';
-
 import { InjectModel } from '@nestjs/sequelize';
 
 import * as fs from 'fs';
-
 import csv from 'csv-parser';
+import * as iconv from 'iconv-lite';
 
 import { Club } from '../clubs/club.model';
 import { Player } from '../players/player.model';
 import { Skill } from '../skills/skill.model';
 import { FifaVersion } from '../fifa-versions/fifa-version.model';
 import { PlayerSkill } from '../player-skills/player-skill.model';
-import * as iconv from 'iconv-lite';
 
 @Injectable()
 export class ImportService {
@@ -33,14 +31,113 @@ export class ImportService {
   ) {}
 
   private clubCache = new Map<number, number>();
-
   private playerCache = new Map<number, number>();
-
   private fifaVersionCache = new Map<number, number>();
-
   private skillCache = new Map<string, number>();
 
+  private readonly ignoredColumns = [
+    'player_id',
+    'player_url',
+    'fifa_version',
+    'fifa_update',
+    'fifa_update_date',
+    'short_name',
+    'long_name',
+    'player_positions',
+    'overall',
+    'potential',
+    'wage_eur',
+    'dob',
+    'height_cm',
+    'weight_kg',
+    'league_id',
+    'league_name',
+    'league_level',
+    'club_team_id',
+    'club_name',
+    'club_position',
+    'club_jersey_number',
+    'club_loaned_from',
+    'club_joined_date',
+    'club_contract_valid_until_year',
+    'nationality_id',
+    'nationality_name',
+    'nation_team_id',
+    'nation_position',
+    'nation_jersey_number',
+    'preferred_foot',
+    'weak_foot',
+    'skill_moves',
+    'international_reputation',
+    'work_rate',
+    'body_type',
+    'real_face',
+    'release_clause_eur',
+    'player_tags',
+    'player_traits',
+    'ls',
+    'st',
+    'rs',
+    'lw',
+    'lf',
+    'cf',
+    'rf',
+    'rw',
+    'lam',
+    'cam',
+    'ram',
+    'lm',
+    'lcm',
+    'cm',
+    'rcm',
+    'rm',
+    'lwb',
+    'ldm',
+    'cdm',
+    'rdm',
+    'rwb',
+    'lb',
+    'lcb',
+    'cb',
+    'rcb',
+    'rb',
+    'gk',
+    'player_face_url',
+    
+    'attacking_heading_accuracy',
+    'attacking_short_passing',
+    'attacking_volleys',
+    
+    'movement_agility',
+    'movement_reactions',
+    'movement_balance',
+    
+    'skill_fk_accuracy',
+    'skill_long_passing',
+    'skill_ball_control',
+    
+    'mentality_aggression',
+    'mentality_interceptions',
+    'mentality_positioning',
+    'mentality_vision',
+    'mentality_penalties',
+    'mentality_composure',
+    
+    'power_stamina',
+    'power_strength',
+    'power_long_shots',
+    
+    'goalkeeping_diving',
+    'goalkeeping_handling',
+    'goalkeeping_kicking',
+    'goalkeeping_positioning',
+    'goalkeeping_reflexes',
+    'goalkeeping_speed',
+  ];
+
   private readonly skillColumns = [
+    'value_eur',
+    'age',
     'pace',
     'shooting',
     'passing',
@@ -50,175 +147,64 @@ export class ImportService {
 
     'attacking_crossing',
     'attacking_finishing',
-    'attacking_heading_accuracy',
-    'attacking_short_passing',
-    'attacking_volleys',
 
     'skill_dribbling',
     'skill_curve',
-    'skill_fk_accuracy',
-    'skill_long_passing',
-    'skill_ball_control',
 
     'movement_acceleration',
     'movement_sprint_speed',
-    'movement_agility',
-    'movement_reactions',
-    'movement_balance',
 
     'power_shot_power',
     'power_jumping',
-    'power_stamina',
-    'power_strength',
-    'power_long_shots',
-
-    'mentality_aggression',
-    'mentality_interceptions',
-    'mentality_positioning',
-    'mentality_vision',
-    'mentality_penalties',
-    'mentality_composure',
 
     'defending_marking_awareness',
     'defending_standing_tackle',
     'defending_sliding_tackle',
-
-    'goalkeeping_diving',
-    'goalkeeping_handling',
-    'goalkeeping_kicking',
-    'goalkeeping_positioning',
-    'goalkeeping_reflexes',
-    'goalkeeping_speed',
   ];
 
   async processCsv(filePath: string, genero: string) {
     await this.loadCaches();
 
+    await this.prepareSkills(filePath);
+
+    // Carga las filas del CSV en memoria para procesarlas después, esto permite separar la lectura del archivo del procesamiento y manejar mejor los errores
     const rows: any[] = [];
 
-    const ignoredColumns = [
-      'player_id',
-      'player_url',
-      'fifa_version',
-      'fifa_update',
-      'fifa_update_date',
-      'short_name',
-      'long_name',
-      'player_positions',
-      'overall',
-      'potential',
-      'value_eur',
-      'wage_eur',
-      'age',
-      'dob',
-      'height_cm',
-      'weight_kg',
-      'league_id',
-      'league_name',
-      'league_level',
-      'club_team_id',
-      'club_name',
-      'club_position',
-      'club_jersey_number',
-      'club_loaned_from',
-      'club_joined_date',
-      'club_contract_valid_until_year',
-      'nationality_id',
-      'nationality_name',
-      'nation_team_id',
-      'nation_position',
-      'nation_jersey_number',
-      'preferred_foot',
-      'weak_foot',
-      'skill_moves',
-      'international_reputation',
-      'work_rate',
-      'body_type',
-      'real_face',
-      'release_clause_eur',
-      'player_tags',
-      'player_traits',
-      'player_face_url',
-    ];
-
+    // Comienza el procesamiento del CSV
     return new Promise((resolve, reject) => {
-      let headersProcessed = false;
-
       fs.createReadStream(filePath)
         .pipe(iconv.decodeStream('utf8'))
-
         .pipe(
           csv({
-            separator: ';',
+            separator: ';', // o ';', Indico que el separador de filas es ";", si no se indica, el parser asume que es "," y no parsea correctamente el archivo
           }),
         )
-
-        .on('headers', async (headers) => {
-          if (headersProcessed) {
-            return;
-          }
-
-          headersProcessed = true;
-
-          const skillColumns = headers.filter(
-            (header) => header && !ignoredColumns.includes(header),
-          );
-
-          for (const rawSkillName of skillColumns) {
-            const skillName = rawSkillName.trim().toLowerCase();
-
-            if (!skillName) {
-              continue;
-            }
-
-            // Evita procesar headers inválidos
-            if (skillName.includes(';')) {
-              console.log(`Header inválido detectado: ${skillName}`);
-              continue;
-            }
-
-            // Ya existe en cache
-            if (this.skillCache.has(skillName)) {
-              continue;
-            }
-
-            // Busca o crea para evitar duplicate entry
-            const [skill] = await this.skillModel.findOrCreate({
-              where: {
-                name: skillName,
-              },
-              defaults: {
-                name: skillName,
-              },
-            });
-
-            this.skillCache.set(skill.name, skill.id);
-          }
-
-          console.log(`Skills cargadas: ${this.skillCache.size}`);
-        })
 
         .on('data', (row) => {
           rows.push(row);
         })
 
         .on('end', async () => {
+          //console.log('Rows obtenidas', rows);
+
           try {
             for (const row of rows) {
               try {
+                if (!row.player_id || !row.short_name) {
+                  continue; // Si no tiene player_id o short_name, no se procesa porque es un registro inválido
+                }
+
                 const playerId = await this.resolvePlayer(row, genero);
 
-                const clubId = await this.resolveClub(row);
+                await this.resolveClub(row);
 
                 const fifaVersionId = await this.resolveFifaVersion(row);
 
+                // Hasta este punto, tenemos el playerId y fifaVersionId resueltos, 
+                // ahora podemos guardar las skills del jugador sin preocuparnos por consultas repetidas o problemas de integridad referencial
                 await this.savePlayerSkills(row, playerId, fifaVersionId);
 
-                console.log({
-                  playerId,
-                  clubId,
-                  fifaVersionId,
-                });
+                console.log(`Jugador procesado: ${row.short_name}`);
               } catch (error) {
                 console.error('Error procesando fila:', error);
               }
@@ -239,6 +225,63 @@ export class ImportService {
     });
   }
 
+  // Carga las skills desde el CSV para asegurarse que todas existan antes de procesar los jugadores y evitar consultas repetidas durante el procesamiento
+  private async prepareSkills(filePath: string) {
+    return new Promise<void>((resolve, reject) => {
+      let processed = false;
+
+      fs.createReadStream(filePath)
+        .pipe(iconv.decodeStream('utf8'))
+        .pipe(
+          csv({
+            separator: ';',
+          }),
+        )
+
+        .on('headers', async (headers) => {
+          if (processed) {
+            return;
+          }
+
+          processed = true;
+
+          try {
+            const skillColumns = headers.filter(
+              (header) => header && !this.ignoredColumns.includes(header),
+            );
+
+            for (const rawSkillName of skillColumns) {
+              const skillName = rawSkillName.trim().toLowerCase();
+
+              if (!skillName) {
+                continue;
+              }
+
+              const [skill] = await this.skillModel.findOrCreate({
+                where: {
+                  name: skillName,
+                },
+                defaults: {
+                  name: skillName,
+                },
+              });
+
+              this.skillCache.set(skill.name, skill.id);
+            }
+
+            console.log(`Skills cargadas: ${this.skillCache.size}`);
+
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        })
+
+        .on('error', reject);
+    });
+  }
+
+  // Realiza una primer busqueda de clubs, jugadores, versiones y skills para cargar los caches y evitar consultas repetidas durante el procesamiento
   private async loadCaches() {
     const clubs = await this.clubModel.findAll();
 
@@ -263,6 +306,8 @@ export class ImportService {
     skills.forEach((skill) => {
       this.skillCache.set(skill.name, skill.id);
     });
+
+    //console.log("skillCache cargada", this.skillCache);
   }
 
   private async resolveClub(row: any) {
@@ -276,10 +321,14 @@ export class ImportService {
       return this.clubCache.get(externalId)!;
     }
 
-    const club = await this.clubModel.create({
-      external_id: externalId,
-
-      name: row.club_name,
+    const [club] = await this.clubModel.findOrCreate({
+      where: {
+        external_id: externalId,
+      },
+      defaults: {
+        external_id: externalId,
+        name: row.club_name,
+      },
     });
 
     this.clubCache.set(externalId, club.id);
@@ -290,15 +339,24 @@ export class ImportService {
   private async resolvePlayer(row: any, genero: string) {
     const externalId = Number(row.player_id);
 
+    if (!externalId || Number.isNaN(externalId)) {
+      throw new Error(`player_id inválido: ${row.player_id}`);
+    }
+
     if (this.playerCache.has(externalId)) {
       return this.playerCache.get(externalId)!;
     }
 
-    const player = await this.playerModel.create({
-      external_id: externalId,
-      name: row.short_name,
-      genero,
-      image: row.player_face_url || null,
+    const [player] = await this.playerModel.findOrCreate({
+      where: {
+        external_id: externalId,
+      },
+      defaults: {
+        external_id: externalId,
+        name: row.short_name?.trim() || 'Unknown',
+        genero,
+        image: row.player_face_url || null,
+      },
     });
 
     this.playerCache.set(externalId, player.id);
@@ -317,10 +375,14 @@ export class ImportService {
       return this.fifaVersionCache.get(versionNumber)!;
     }
 
-    const version = await this.fifaVersionModel.create({
-      version_number: versionNumber,
-
-      year: 2000 + versionNumber,
+    const [version] = await this.fifaVersionModel.findOrCreate({
+      where: {
+        version_number: versionNumber,
+      },
+      defaults: {
+        version_number: versionNumber,
+        year: 2000 + versionNumber,
+      },
     });
 
     this.fifaVersionCache.set(versionNumber, version.id);
@@ -333,9 +395,21 @@ export class ImportService {
     playerId: number,
     fifaVersionId: number,
   ) {
+    const playerSkills: {
+      player_id: number;
+      fifa_version_id: number;
+      skill_id: number;
+      value: number;
+    }[] = [];
+
+    //console.log("Skill Cache", this.skillCache);
+
     for (const skillName of this.skillColumns) {
-      if (!this.skillCache.has(skillName)) {
-        continue;
+      const skillId = this.skillCache.get(skillName);
+
+      if (!skillId) {
+        console.log("Skill no encontrada en cache, se omite:", skillName);
+        continue; 
       }
 
       const rawValue = row[skillName];
@@ -344,20 +418,23 @@ export class ImportService {
         continue;
       }
 
-      const numericValue = Number(rawValue);
+      const skillValue = rawValue;
 
-      if (Number.isNaN(numericValue)) {
+      /* if (Number.isNaN(skillValue)) {
         continue;
-      }
+      } */
 
-      await this.playerSkillModel.create({
+      playerSkills.push({
         player_id: playerId,
-
         fifa_version_id: fifaVersionId,
+        skill_id: skillId,
+        value: skillValue,
+      });
+    }
 
-        skill_id: this.skillCache.get(skillName)!,
-
-        value: numericValue,
+    if (playerSkills.length > 0) {
+      await this.playerSkillModel.bulkCreate(playerSkills, {
+        ignoreDuplicates: true,
       });
     }
   }
