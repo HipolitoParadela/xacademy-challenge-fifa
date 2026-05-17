@@ -10,6 +10,9 @@ import { ImportModule } from './import/import.module';
 import { ClubsModule } from './clubs/club.module';
 import { SkillsModule } from './skills/skill.module';
 import { FifaVersionsModule } from './fifa-versions/fifa-versions.module';
+import { PlayerSkillModule } from './player-skills/player-skill.module';
+import { PlayerModule } from './players/players.module';
+import { PositionsModule } from './positions/position.module';
 
 @Module({
   imports: [
@@ -20,25 +23,18 @@ import { FifaVersionsModule } from './fifa-versions/fifa-versions.module';
     SequelizeModule.forRootAsync({
       inject: [ConfigService],
 
-      useFactory: (
-        configService: ConfigService,
-      ) => ({
+      useFactory: (configService: ConfigService) => ({
         dialect: 'mysql',
 
         host: configService.get('DB_HOST'),
 
-        port: Number(
-          configService.get('DB_PORT'),
-        ),
+        port: Number(configService.get('DB_PORT')),
 
-        username:
-          configService.get('DB_USER'),
+        username: configService.get('DB_USER'),
 
-        password:
-          configService.get('DB_PASSWORD'),
+        password: configService.get('DB_PASSWORD'),
 
-        database:
-          configService.get('DB_NAME'),
+        database: configService.get('DB_NAME'),
 
         autoLoadModels: true,
 
@@ -50,8 +46,11 @@ import { FifaVersionsModule } from './fifa-versions/fifa-versions.module';
     ClubsModule,
     FifaVersionsModule,
     ImportModule,
+    PlayerModule,
+    PlayerSkillModule,
+    PositionsModule,
     UsersModule,
-    SkillsModule
+    SkillsModule,
   ],
 })
 export class AppModule {}

@@ -1,48 +1,69 @@
 import {
+  BelongsTo,
   Column,
   DataType,
+  ForeignKey,
   Model,
   Table,
 } from 'sequelize-typescript';
 
+import { Player } from '../players/players.model';
+import { Skill } from '../skills/skill.model';
+import { FifaVersion } from '../fifa-versions/fifa-version.model';
+
+interface PlayerSkillAttributes {
+  id?: number;
+  player_id: number;
+  fifa_version_id: number;
+  skill_id: number;
+  value: number;
+}
+
 @Table({
-  tableName: 'player_skills', timestamps: false,
+  tableName: 'player_skills',
+  timestamps: false,
 })
-export class PlayerSkill extends Model {
+export class PlayerSkill extends Model<PlayerSkillAttributes> {
   @Column({
     type: DataType.INTEGER,
-
     autoIncrement: true,
-
     primaryKey: true,
   })
   declare id: number;
 
+  @ForeignKey(() => Player)
   @Column({
     type: DataType.INTEGER,
-
     allowNull: false,
   })
-  player_id!: number;
+  declare player_id: number;
 
+  @BelongsTo(() => Player)
+  declare player: Player;
+
+  @ForeignKey(() => FifaVersion)
   @Column({
     type: DataType.INTEGER,
-
     allowNull: false,
   })
-  fifa_version_id!: number;
+  declare fifa_version_id: number;
 
+  @BelongsTo(() => FifaVersion)
+  declare fifaVersion: FifaVersion;
+
+  @ForeignKey(() => Skill)
   @Column({
     type: DataType.INTEGER,
-
     allowNull: false,
   })
-  skill_id!: number;
+  declare skill_id: number;
+
+  @BelongsTo(() => Skill)
+  declare skill: Skill;
 
   @Column({
-    type: DataType.INTEGER,
-
+    type: DataType.BIGINT,
     allowNull: false,
   })
-  value!: number;
+  declare value: number;
 }

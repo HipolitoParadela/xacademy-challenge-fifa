@@ -6,7 +6,7 @@ import csv from 'csv-parser';
 import * as iconv from 'iconv-lite';
 
 import { Club } from '../clubs/club.model';
-import { Player } from '../players/player.model';
+import { Player } from '../players/players.model';
 import { Skill } from '../skills/skill.model';
 import { FifaVersion } from '../fifa-versions/fifa-version.model';
 import { PlayerSkill } from '../player-skills/player-skill.model';
@@ -43,9 +43,6 @@ export class ImportService {
     'fifa_update_date',
     'short_name',
     'long_name',
-    'player_positions',
-    'overall',
-    'potential',
     'wage_eur',
     'dob',
     'height_cm',
@@ -53,7 +50,6 @@ export class ImportService {
     'league_id',
     'league_name',
     'league_level',
-    'club_team_id',
     'club_name',
     'club_position',
     'club_jersey_number',
@@ -103,30 +99,30 @@ export class ImportService {
     'rb',
     'gk',
     'player_face_url',
-    
+
     'attacking_heading_accuracy',
     'attacking_short_passing',
     'attacking_volleys',
-    
+
     'movement_agility',
     'movement_reactions',
     'movement_balance',
-    
+
     'skill_fk_accuracy',
     'skill_long_passing',
     'skill_ball_control',
-    
+
     'mentality_aggression',
     'mentality_interceptions',
     'mentality_positioning',
     'mentality_vision',
     'mentality_penalties',
     'mentality_composure',
-    
+
     'power_stamina',
     'power_strength',
     'power_long_shots',
-    
+
     'goalkeeping_diving',
     'goalkeeping_handling',
     'goalkeeping_kicking',
@@ -136,6 +132,7 @@ export class ImportService {
   ];
 
   private readonly skillColumns = [
+    'club_team_id',
     'value_eur',
     'age',
     'pace',
@@ -144,6 +141,10 @@ export class ImportService {
     'dribbling',
     'defending',
     'physic',
+    
+    'overall',
+    'potential',
+    'player_positions',
 
     'attacking_crossing',
     'attacking_finishing',
@@ -200,7 +201,7 @@ export class ImportService {
 
                 const fifaVersionId = await this.resolveFifaVersion(row);
 
-                // Hasta este punto, tenemos el playerId y fifaVersionId resueltos, 
+                // Hasta este punto, tenemos el playerId y fifaVersionId resueltos,
                 // ahora podemos guardar las skills del jugador sin preocuparnos por consultas repetidas o problemas de integridad referencial
                 await this.savePlayerSkills(row, playerId, fifaVersionId);
 
@@ -263,7 +264,7 @@ export class ImportService {
                 },
                 defaults: {
                   name: skillName,
-                },
+                } as any,
               });
 
               this.skillCache.set(skill.name, skill.id);
@@ -408,8 +409,8 @@ export class ImportService {
       const skillId = this.skillCache.get(skillName);
 
       if (!skillId) {
-        console.log("Skill no encontrada en cache, se omite:", skillName);
-        continue; 
+        console.log('Skill no encontrada en cache, se omite:', skillName);
+        continue;
       }
 
       const rawValue = row[skillName];
@@ -418,11 +419,11 @@ export class ImportService {
         continue;
       }
 
-      const skillValue = rawValue;
+      const skillValue = Number.parseInt(String(rawValue), 10);
 
-      /* if (Number.isNaN(skillValue)) {
+      if (Number.isNaN(skillValue)) {
         continue;
-      } */
+      }
 
       playerSkills.push({
         player_id: playerId,
