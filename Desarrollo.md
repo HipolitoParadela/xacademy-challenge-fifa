@@ -47,8 +47,19 @@ MEJORAR
 
 
 #Frontend fase 1
-1 - Diseño de la plantilla pensada tanto para desktop como para mobile.
-2 - Desarrollo de las páginas previamente diseñadas. Login, Dashboard, Listado de jugadores, Listado de clubes, Listado de Versiones del Fifa, etc.
-3 - Conecciones de cada pantalla con el back para dinamizar el contenido.
-4 - Tests
-5 - Video de demostración
+    1 - Diseño de la plantilla pensada tanto para desktop como para mobile.
+
+    2 - Desarrollo de página y función de login
+
+    3 - Desarrollo y funcionamiento de dashboard con la tabla de jugadores y filtros
+
+    4 - Funcionalidad de exportar jugadores a excel
+
+    5 - Desarrollo y funcionamiento de formulario para crear o editar un jugador
+
+    6 - Desarrollo y funcionamiento de página de un jugador. Con gráficos y linea de tiempo.
+
+    7 - Incorporar a la línea de tiempo un análisis narrativo automático sobre la trayectoria del jugador.
+        Ej: "A partir de 2019 se nota una baja en su aceleración, compensada por una mejora en la visión de juego"
+
+#Video de demostración

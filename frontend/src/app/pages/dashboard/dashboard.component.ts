@@ -3,6 +3,7 @@ import {
   OnInit,
 } from '@angular/core';
 
+
 import {
   CommonModule,
 } from '@angular/common';
@@ -10,6 +11,9 @@ import {
 import {
   FormsModule,
 } from '@angular/forms';
+
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 import {
   PositionsService,
@@ -59,29 +63,18 @@ export class DashboardComponent
   positions: string[] = [];
   fifaVersions: FifaVersion[] = [];
   clubs: Club[] = [];
-
-  selectedPositions: string[] =
-    [];
-
+  selectedPositions: string[] = [];
   selectedFifa = '';
-
   selectedClub = '';
-
   gender = 'all';
-
   mobileFilters = false;
-
   players: Player[] = [];
-
   total = 0;
-
   page = 0;
-
   limit = 20;
-
   loading = false;
-
   search = '';
+  totalPlayers = 0;
 
   constructor(
     private positionsService:
@@ -240,11 +233,6 @@ export class DashboardComponent
     this.loadPlayers();
   }
 
-
-  totalPlayers = 0;
-
-
-
   get totalPages(): number {
     return Math.ceil(
       this.totalPlayers / this.limit,
@@ -337,6 +325,74 @@ export class DashboardComponent
   nextPage() {
     this.goToPage(
       this.page + 1,
+    );
+  }
+
+  exportToExcel() {
+    if (!this.players.length) {
+      return;
+    }
+
+    const data =
+      this.players.map(
+        (p: any) => ({
+          Player: p.name,
+          Club: p.club,
+          Gender: p.genero,
+          Position:
+            p.player_positions,
+          Overall:
+            p.overall,
+          Potential:
+            p.potential,
+          Age: p.age,
+          Value_EUR:
+            p.value_eur,
+        }),
+      );
+
+    const worksheet =
+      XLSX.utils.json_to_sheet(
+        data,
+      );
+
+    const workbook =
+      XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      'Players',
+    );
+
+    const excelBuffer =
+      XLSX.write(
+        workbook,
+        {
+          bookType:
+            'xlsx',
+          type:
+            'array',
+        },
+      );
+
+    const blob =
+      new Blob(
+        [excelBuffer],
+        {
+          type:
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8',
+        },
+      );
+
+    saveAs(
+      blob,
+      `players_${new Date()
+        .toISOString()
+        .slice(
+          0,
+          10,
+        )}.xlsx`,
     );
   }
 }
