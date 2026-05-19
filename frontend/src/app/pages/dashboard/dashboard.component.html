@@ -29,20 +29,14 @@
 
       <div class="hidden md:flex items-center w-[420px]">
 
-        <input
-          type="text"
-          placeholder="Search player..."
-          class="w-full rounded-2xl bg-[#131B25] border border-[#253041] px-4 py-2 outline-none focus:border-[#00FF9D]"
-        />
+        <input [(ngModel)]="search" (input)="onSearch()" placeholder="Search player..."
+          class="w-full rounded-2xl bg-[#131B25] border border-[#253041] px-4 py-2 outline-none focus:border-[#00FF9D]" />
 
       </div>
 
       <!-- MOBILE FILTER BTN -->
 
-      <button
-        class="lg:hidden px-4 py-2 rounded-xl bg-[#131B25]"
-        (click)="mobileFilters = !mobileFilters"
-      >
+      <button class="lg:hidden px-4 py-2 rounded-xl bg-[#131B25]" (click)="mobileFilters = !mobileFilters">
         Filters
       </button>
 
@@ -58,16 +52,11 @@
 
       <!-- MOBILE OVERLAY -->
 
-      <div
-        *ngIf="mobileFilters"
-        class="fixed inset-0 bg-black/50 z-40 lg:hidden"
-        (click)="mobileFilters=false"
-      ></div>
+      <div *ngIf="mobileFilters" class="fixed inset-0 bg-black/50 z-40 lg:hidden" (click)="mobileFilters=false"></div>
 
       <!-- SIDEBAR -->
 
-      <aside
-        class="
+      <aside class="
           fixed lg:sticky
           top-0 lg:top-6
           left-0
@@ -81,10 +70,7 @@
           p-6
           transition-transform duration-300
           lg:translate-x-0
-        "
-        [class.translate-x-0]="mobileFilters"
-        [class.-translate-x-full]="!mobileFilters"
-      >
+        " [class.translate-x-0]="mobileFilters" [class.-translate-x-full]="!mobileFilters">
 
         <!-- MOBILE HEADER -->
 
@@ -110,14 +96,10 @@
 
           <div class="flex flex-wrap gap-2">
 
-            <button
-              *ngFor="let pos of positions"
-              (click)="togglePosition(pos)"
-              class="px-3 py-2 rounded-xl text-sm transition"
-              [ngClass]="selectedPositions.includes(pos)
+            <button *ngFor="let pos of positions" (click)="togglePosition(pos)"
+              class="px-3 py-2 rounded-xl text-sm transition" [ngClass]="selectedPositions.includes(pos)
                 ? 'bg-[#00FF9D] text-black font-semibold'
-                : 'bg-[#1A222E] text-gray-300'"
-            >
+                : 'bg-[#1A222E] text-gray-300'">
               {{ pos }}
             </button>
 
@@ -133,20 +115,18 @@
             Club
           </h3>
 
-          <input
-            list="clubs"
-            [(ngModel)]="club"
-            placeholder="Search club..."
-            class="w-full rounded-2xl bg-[#1A222E] border border-[#2B3545] px-4 py-3 outline-none focus:border-[#00FF9D]"
-          />
+          <select [(ngModel)]="selectedClub" (ngModelChange)="selectClub($event)"
+            class="w-full rounded-2xl bg-[#1A222E] border border-[#263241] px-4 py-3 outline-none">
 
-          <datalist id="clubs">
-
-            <option *ngFor="let club of clubs">
-              {{ club }}
+            <option value="">
+              Todos los clubes
             </option>
 
-          </datalist>
+            <option *ngFor="let c of clubs" [value]="c.external_id">
+              {{ c.name }}
+            </option>
+
+          </select>
 
         </div>
 
@@ -160,15 +140,13 @@
 
           <div class="flex flex-wrap gap-2">
 
-            <button
-              *ngFor="let v of fifaVersions"
-              (click)="selectFifa(v)"
-              class="px-3 py-2 rounded-xl text-sm transition"
-              [ngClass]="selectedFifa === v
-                ? 'bg-[#00FF9D] text-black'
-                : 'bg-[#1A222E] text-gray-300'"
-            >
-              {{ v }}
+            <button *ngFor="let v of fifaVersions" (click)="selectFifa(v.id.toString())"
+              class="px-4 py-2 rounded-xl text-sm transition" [ngClass]="
+              selectedFifa === v.id.toString()
+                ? 'bg-[#00FF9D] text-black font-semibold'
+                : 'bg-[#1A222E] text-gray-300'
+            ">
+              FIFA {{ v.version_number }}
             </button>
 
           </div>
@@ -185,35 +163,27 @@
 
           <div class="flex bg-[#1A222E] rounded-2xl p-1">
 
-            <button
-              class="flex-1 py-2 rounded-xl transition"
-              [ngClass]="gender==='all'
-                ? 'bg-[#00FF9D] text-black'
-                : 'text-gray-300'"
-              (click)="gender='all'"
-            >
-              All
-            </button>
+            <div class="space-y-2">
 
-            <button
-              class="flex-1 py-2 rounded-xl transition"
-              [ngClass]="gender==='male'
-                ? 'bg-[#00FF9D] text-black'
-                : 'text-gray-300'"
-              (click)="gender='male'"
-            >
-              Men
-            </button>
+              <button (click)="gender='all'; loadPlayers()" [ngClass]="gender==='all'
+      ? 'bg-[#00FF9D] text-black'
+      : 'bg-[#1A222E]'" class="px-4 py-2 rounded-xl text-sm">
+                Ambos
+              </button>
 
-            <button
-              class="flex-1 py-2 rounded-xl transition"
-              [ngClass]="gender==='female'
-                ? 'bg-[#00FF9D] text-black'
-                : 'text-gray-300'"
-              (click)="gender='female'"
-            >
-              Women
-            </button>
+              <button (click)="gender='male'; loadPlayers()" [ngClass]="gender==='male'
+      ? 'bg-[#00FF9D] text-black'
+      : 'bg-[#1A222E]'" class="px-4 py-2 rounded-xl text-sm">
+                Varón
+              </button>
+
+              <button (click)="gender='female'; loadPlayers()" [ngClass]="gender==='female'
+      ? 'bg-[#00FF9D] text-black'
+      : 'bg-[#1A222E]'" class="px-4 py-2 rounded-xl text-sm">
+                Mujer
+              </button>
+
+            </div>
 
           </div>
 
@@ -225,46 +195,60 @@
 
       <main class="flex-1 min-w-0 lg:ml-0">
 
-        <div class="bg-[#111827] border border-[#1F2937] rounded-3xl overflow-hidden">
+        <div class="bg-[#111827] border border-[#1F2937] rounded-3xl overflow-hidden shadow-2xl">
 
-          <!-- TABLE HEADER -->
-
-          <div class="px-6 py-4 border-b border-[#1F2937] flex justify-between items-center">
+          <div
+            class="px-6 py-5 border-b border-[#1F2937] flex flex-col md:flex-row md:justify-between md:items-center gap-4">
 
             <div>
-
-              <h2 class="text-xl font-bold">
-                Players
+              <h2 class="text-2xl font-bold">
+                FIFA Players
               </h2>
 
-              <p class="text-sm text-gray-400">
-                {{ players.length }} players
+              <p class="text-gray-400 text-sm">
+                {{ total }} players found
               </p>
-
             </div>
+
+            <!-- <input [(ngModel)]="search" (keyup.enter)="loadPlayers()" placeholder="Search player..."
+              class="bg-[#1A222E] rounded-2xl px-4 py-3 outline-none border border-[#263241] w-full md:w-72" /> -->
 
           </div>
 
-          <!-- TABLE -->
-
           <div class="overflow-x-auto">
 
-            <table class="w-full min-w-[600px]">
+            <table class="w-full min-w-[900px]">
 
-              <thead class="bg-[#0E1621] text-gray-400 text-sm">
+              <thead class="bg-[#0D141E] text-xs uppercase text-gray-400">
 
                 <tr>
 
-                  <th class="text-left px-6 py-4">
-                    Image
-                  </th>
-
-                  <th class="text-left px-6 py-4">
+                  <th class="px-5 py-4 text-left">
                     Player
                   </th>
 
-                  <th class="text-left px-6 py-4">
+                  <th class="px-5 py-4 text-left">
                     Club
+                  </th>
+
+                  <th class="px-5 py-4 text-center">
+                    Pos
+                  </th>
+
+                  <th class="px-5 py-4 text-center">
+                    Age
+                  </th>
+
+                  <th class="px-5 py-4 text-center">
+                    OVR
+                  </th>
+
+                  <th class="px-5 py-4 text-center">
+                    POT
+                  </th>
+
+                  <th class="px-5 py-4 text-right">
+                    Value
                   </th>
 
                 </tr>
@@ -273,32 +257,68 @@
 
               <tbody>
 
-                <tr
-                  *ngFor="let p of players"
-                  class="border-t border-[#1F2937] hover:bg-[#131B25] transition"
-                >
+                <tr *ngFor="let p of players"
+                  class="border-t border-[#1F2937] hover:bg-[#131B25] transition duration-200">
 
-                  <td class="px-6 py-4">
+                  <td class="px-5 py-4">
 
-                    <img
-                      [src]="p.image"
-                      class="w-12 h-12 rounded-full object-cover"
-                    />
+                    <div class="flex items-center gap-4">
+
+                      <img [src]="p.image || 'https://placehold.co/80'"
+                        class="w-14 h-14 rounded-2xl object-cover border border-[#2A3442]" />
+
+                      <div>
+                        <div class="font-semibold text-white">
+                          {{ p.name }}
+                        </div>
+
+                        <div class="text-xs text-gray-400">
+                          {{ p.genero }}
+                        </div>
+                      </div>
+
+                    </div>
 
                   </td>
 
-                  <td class="px-6 py-4 font-medium">
-
-                    {{ p.name }}
-
-                  </td>
-
-                  <td class="px-6 py-4 text-gray-300">
-
+                  <td class="px-5 py-4 text-gray-300">
                     {{ p.club }}
+                  </td>
+
+                  <td class="px-5 py-4 text-center">
+
+                    <span class="bg-[#1A222E] px-3 py-1 rounded-xl text-xs">
+                      {{ p.player_positions }}
+                    </span>
 
                   </td>
 
+                  <td class="px-5 py-4 text-center">
+                    {{ p.age }}
+                  </td>
+
+                  <td class="px-5 py-4 text-center">
+
+                    <span class="bg-[#00FF9D] text-black font-bold px-3 py-1 rounded-xl">
+                      {{ p.overall }}
+                    </span>
+
+                  </td>
+
+                  <td class="px-5 py-4 text-center text-cyan-300">
+                    {{ p.potential }}
+                  </td>
+
+                  <td class="px-5 py-4 text-right text-green-400 font-medium">
+                    € {{ p.value_eur | number }}
+                  </td>
+
+                </tr>
+
+                <tr *ngIf="loading">
+                  <td colspan="7" class="text-center py-10 text-gray-400">
+                    Loading players...
+                  </td>
                 </tr>
 
               </tbody>
@@ -307,25 +327,106 @@
 
           </div>
 
-          <!-- PAGINATION -->
+          <div class="px-5 py-4 border-t border-[#1F2937]
+         flex flex-col md:flex-row
+         items-center justify-between gap-4">
 
-          <div class="px-6 py-4 border-t border-[#1F2937] flex justify-center gap-2">
+            <!-- RESULTS -->
 
-            <button class="px-4 py-2 rounded-xl bg-[#1A222E]">
-              Prev
-            </button>
+            <div class="text-sm text-gray-400">
 
-            <button class="px-4 py-2 rounded-xl bg-[#00FF9D] text-black">
-              1
-            </button>
+              Mostrando desde
+              <span class="text-white font-medium">
+                {{ startItem }}
+              </span>
 
-            <button class="px-4 py-2 rounded-xl bg-[#1A222E]">
-              2
-            </button>
+              al
 
-            <button class="px-4 py-2 rounded-xl bg-[#1A222E]">
-              Next
-            </button>
+              <span class="text-white font-medium">
+                {{ endItem }}
+              </span>
+
+              de
+
+              <span class="text-[#00FF9D] font-semibold">
+                {{ totalPlayers }}
+              </span>
+
+              jugadores
+
+            </div>
+
+            <!-- PAGINATION -->
+
+            <div class="flex items-center gap-2 flex-wrap justify-center">
+
+              <!-- PREV -->
+
+              <button (click)="prevPage()" [disabled]="page === 0" class="px-4 py-2 rounded-2xl transition
+      bg-[#1A222E]
+      disabled:opacity-40
+      disabled:cursor-not-allowed
+      hover:bg-[#243041]">
+                Anterior
+              </button>
+
+              <!-- FIRST -->
+
+              <button *ngIf="visiblePages[0] > 1" (click)="goToPage(0)" class="w-10 h-10 rounded-xl bg-[#1A222E]">
+                1
+              </button>
+
+              <span *ngIf="visiblePages[0] > 2" class="px-1 text-gray-500">
+                ...
+              </span>
+
+              <!-- PAGES -->
+
+              <button *ngFor="
+        let p of visiblePages
+      " (click)="goToPage(p - 1)" class="w-10 h-10 rounded-xl
+             text-sm transition" [ngClass]="
+        currentPage === p
+          ? 'bg-[#00FF9D] text-black font-bold shadow-lg shadow-[#00FF9D]/20'
+          : 'bg-[#1A222E] hover:bg-[#243041]'
+      ">
+                {{ p }}
+              </button>
+
+              <!-- LAST -->
+
+              <span *ngIf="
+        visiblePages[
+          visiblePages.length - 1
+        ] < totalPages - 1
+      " class="px-1 text-gray-500">
+                ...
+              </span>
+
+              <button *ngIf="
+        visiblePages[
+          visiblePages.length - 1
+        ] < totalPages
+      " (click)="goToPage(totalPages - 1)" class="w-10 h-10 rounded-xl bg-[#1A222E]">
+                {{ totalPages }}
+              </button>
+
+              <!-- NEXT -->
+
+              <button (click)="nextPage()" [disabled]="
+        page >=
+        totalPages - 1
+      " class="px-4 py-2 rounded-2xl transition
+      bg-[#00FF9D]
+      text-black
+      font-medium
+      disabled:opacity-40
+      disabled:cursor-not-allowed
+      hover:opacity-90">
+                Siguiente
+              </button>
+
+            </div>
 
           </div>
 

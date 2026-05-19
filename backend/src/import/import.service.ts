@@ -174,7 +174,8 @@ export class ImportService {
     // Comienza el procesamiento del CSV
     return new Promise((resolve, reject) => {
       fs.createReadStream(filePath)
-        .pipe(iconv.decodeStream('utf8'))
+        //.pipe(iconv.decodeStream('utf8'))
+        .pipe(iconv.decodeStream('latin1'))
         .pipe(
           csv({
             separator: ';', // o ';', Indico que el separador de filas es ";", si no se indica, el parser asume que es "," y no parsea correctamente el archivo
@@ -232,7 +233,8 @@ export class ImportService {
       let processed = false;
 
       fs.createReadStream(filePath)
-        .pipe(iconv.decodeStream('utf8'))
+        //.pipe(iconv.decodeStream('utf8'))
+        .pipe(iconv.decodeStream('latin1'))
         .pipe(
           csv({
             separator: ';',

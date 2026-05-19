@@ -1,15 +1,16 @@
 import {
-  BelongsTo,
   Column,
   DataType,
   ForeignKey,
   Model,
   Table,
+  BelongsTo,
 } from 'sequelize-typescript';
 
 import { Player } from '../players/players.model';
 import { Skill } from '../skills/skill.model';
 import { FifaVersion } from '../fifa-versions/fifa-version.model';
+
 
 interface PlayerSkillAttributes {
   id?: number;
@@ -38,8 +39,6 @@ export class PlayerSkill extends Model<PlayerSkillAttributes> {
   })
   declare player_id: number;
 
-  @BelongsTo(() => Player)
-  declare player: Player;
 
   @ForeignKey(() => FifaVersion)
   @Column({
@@ -66,4 +65,15 @@ export class PlayerSkill extends Model<PlayerSkillAttributes> {
     allowNull: false,
   })
   declare value: string;
+
+  @BelongsTo(
+    () => Player,
+    {
+      foreignKey:
+        'player_id',
+      as: 'player',
+    },
+  )
+  declare player:
+    Player;
 }

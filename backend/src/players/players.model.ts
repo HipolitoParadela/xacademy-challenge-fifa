@@ -1,13 +1,14 @@
 import {
-  BelongsToMany,
   Column,
   DataType,
   Model,
   Table,
+  HasMany
 } from 'sequelize-typescript';
 
 import { Skill } from '../skills/skill.model';
 import { PlayerSkill } from '../player-skills/player-skill.model';
+
 
 interface PlayerAttributes {
   id?: number;
@@ -54,6 +55,39 @@ export class Player extends Model<PlayerAttributes> {
   })
   declare image?: string;
 
-  @BelongsToMany(() => Skill, () => PlayerSkill)
-  declare skills: Skill[];
+  /* @BelongsToMany(() => Skill, () => PlayerSkill)
+  declare skills: Skill[]; */
+
+  @HasMany(
+    () => PlayerSkill,
+    {
+      foreignKey:
+        'player_id',
+      as: 'skills',
+    },
+  )
+  declare skills:
+    PlayerSkill[];
+
+  @HasMany(
+    () => PlayerSkill,
+    {
+      foreignKey:
+        'player_id',
+      as: 'positionFilter',
+    },
+  )
+  declare positionFilter:
+    PlayerSkill[];
+
+  @HasMany(
+    () => PlayerSkill,
+    {
+      foreignKey:
+        'player_id',
+      as: 'clubFilter',
+    },
+  )
+  declare clubFilter:
+    PlayerSkill[];
 }

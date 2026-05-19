@@ -21,7 +21,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 export class PlayerController {
   constructor(
     private readonly playerService: PlayerService,
-  ) {}
+  ) { }
 
   @UseGuards(JwtAuthGuard)
   @Get()
@@ -29,9 +29,19 @@ export class PlayerController {
     @Query('search') search?: string,
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
+    @Query('position') position?: string,
+    @Query('clubId') clubId?: string,
+    @Query('fifaVersionId') fifaVersionId?: string,
+    @Query('gender') gender?: string,
   ) {
     return this.playerService.findAll({
       search,
+      position,
+      clubId: clubId ? Number(clubId) : undefined,
+      fifaVersionId: fifaVersionId
+        ? Number(fifaVersionId)
+        : undefined,
+      gender,
       limit: limit ? Number(limit) : 50,
       offset: offset ? Number(offset) : 0,
     });
