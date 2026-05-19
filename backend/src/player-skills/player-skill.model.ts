@@ -16,7 +16,7 @@ interface PlayerSkillAttributes {
   player_id: number;
   fifa_version_id: number;
   skill_id: number;
-  value: number;
+  value: string;
 }
 
 @Table({
@@ -62,8 +62,8 @@ export class PlayerSkill extends Model<PlayerSkillAttributes> {
   declare skill: Skill;
 
   @Column({
-    type: DataType.BIGINT,
+    type: DataType.STRING,
     allowNull: false,
   })
-  declare value: number;
+  declare value: string;
 }

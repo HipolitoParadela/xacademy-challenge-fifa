@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "ng serve --host 0.0.0.0 --proxy-config proxy.conf.json",
+    "start": "ng serve --host 0.0.0.0 --poll=2000 --proxy-config proxy.conf.js",
     "build": "ng build",
     "watch": "ng build --watch --configuration development"
   },
@@ -20,17 +20,16 @@
     "chart.js": "^4.4.1",
     "ng2-charts": "^8.0.0",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0",
+    "tslib": "^2.8.1",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
     "@angular/build": "^20.0.0",
     "@angular/cli": "^20.0.0",
     "@angular/compiler-cli": "^20.0.0",
-    "@tailwindcss/postcss": "^4.3.0",
-    "autoprefixer": "^10.4.35",
-    "postcss": "^8.5.3",
-    "tailwindcss": "^4.1.7",
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.14",
+    "tailwindcss": "^3.4.19",
     "typescript": "~5.8.2"
   }
 }

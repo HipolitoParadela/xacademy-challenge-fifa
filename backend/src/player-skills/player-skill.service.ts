@@ -136,21 +136,21 @@ export class PlayerSkillService {
         continue;
       }
 
-      const value = Number(skills[skillName]);
+      const value = String(skills[skillName]);
 
-      if (Number.isNaN(value)) {
+      /* if (Number.isNaN(value)) {
         console.log(
           `Valor inválido para ${skillName}: ${skills[skillName]}`,
         );
 
         continue;
-      }
+      } */
 
       playerSkills.push({
         player_id,
         fifa_version_id,
         skill_id: skillId,
-        value,
+        value: String(value)
       });
     }
 

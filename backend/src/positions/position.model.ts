@@ -27,5 +27,12 @@ export class Position extends Model<PositionAttributes> {
     allowNull: false,
     unique: true,
   })
+  declare code: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    unique: true,
+  })
   declare name: string;
 }

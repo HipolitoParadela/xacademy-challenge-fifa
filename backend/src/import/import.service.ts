@@ -400,7 +400,7 @@ export class ImportService {
       player_id: number;
       fifa_version_id: number;
       skill_id: number;
-      value: number;
+      value: string;
     }[] = [];
 
     //console.log("Skill Cache", this.skillCache);
@@ -419,11 +419,11 @@ export class ImportService {
         continue;
       }
 
-      const skillValue = Number.parseInt(String(rawValue), 10);
+      const skillValue = String(rawValue);
 
-      if (Number.isNaN(skillValue)) {
+      /* if (Number.isNaN(skillValue)) {
         continue;
-      }
+      } */
 
       playerSkills.push({
         player_id: playerId,
