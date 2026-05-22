@@ -18,7 +18,7 @@ module.exports = {
         external_id: {
           type: Sequelize.INTEGER,
 
-          allowNull: false,
+          allowNull: true,
 
           unique: true,
         },

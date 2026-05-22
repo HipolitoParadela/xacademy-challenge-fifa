@@ -244,6 +244,8 @@ export class PlayerService {
 
           return {
             id: player.id,
+            external_id:
+              player.external_id,
             name: player.name,
             image:
               player.image,
@@ -380,6 +382,204 @@ export class PlayerService {
     return player;
   }
 
+  async getProfile(
+    playerId: number,
+  ) {
+    // jugador base
+    const player =
+      await this.playerModel.findByPk(
+        playerId,
+      );
+
+    if (!player) {
+      return null;
+    }
+
+    // ultima version fifa conocida para ese jugador
+    const latestSkill =
+      await this.playerSkillModel.findOne({
+        where: {
+          player_id: playerId,
+        },
+
+        include: [
+          {
+            model: FifaVersion,
+            as: 'fifaVersion',
+            attributes: [
+              'id',
+              'version_number',
+              'year',
+            ],
+          },
+        ],
+
+        order: [
+          [
+            'fifaVersion',
+            'version_number',
+            'DESC',
+          ],
+        ],
+      });
+
+    if (!latestSkill?.fifaVersion) {
+      return {
+        player,
+        fifa_version: null,
+        skills: {},
+      };
+    }
+
+    const fifaVersionId =
+      latestSkill.fifaVersion.id;
+
+    // todas las skills de esa version
+    const skillsRows =
+      await this.playerSkillModel.findAll({
+        where: {
+          player_id: playerId,
+          fifa_version_id:
+            fifaVersionId,
+        },
+
+        include: [
+          {
+            model: Skill,
+            as: 'skill',
+            attributes: ['name'],
+          },
+        ],
+      });
+
+    const skills:
+      Record<string, string> = {};
+
+    for (const row of skillsRows as any[]) {
+      if (row.skill?.name) {
+        skills[
+          row.skill.name
+        ] = row.value;
+      }
+    }
+
+    return {
+      player: {
+        id: player.id,
+        name: player.name,
+        image: player.image,
+        genero: player.genero,
+        external_id:
+          player.external_id,
+      },
+
+      fifa_version: {
+        id:
+          latestSkill
+            .fifaVersion.id,
+        version_number:
+          latestSkill
+            .fifaVersion
+            .version_number,
+        year:
+          latestSkill
+            .fifaVersion.year,
+      },
+
+      skills,
+    };
+  }
+
+
+  async getEvolution(
+    playerId: number,
+  ) {
+    const rows =
+      await this.playerSkillModel.findAll({
+        where: {
+          player_id: playerId,
+        },
+
+        include: [
+          {
+            model: Skill,
+            as: 'skill',
+            attributes: ['id', 'name'],
+            required: true,
+          },
+          {
+            model: FifaVersion,
+            as: 'fifaVersion',
+            required: true,
+          },
+        ],
+
+        order: [
+          [
+            {
+              model: FifaVersion,
+              as: 'fifaVersion',
+            },
+            'version_number',
+            'ASC',
+          ],
+        ],
+      });
+
+    const evolutionMap:
+      Record<number, any> = {};
+
+    for (const row of rows as any[]) {
+      const fifa =
+        row.fifaVersion;
+
+      const skill =
+        row.skill;
+
+      if (
+        !fifa ||
+        !skill?.name
+      ) {
+        continue;
+      }
+
+      const versionId =
+        fifa.id;
+
+      // crear version si no existe
+      if (
+        !evolutionMap[
+        versionId
+        ]
+      ) {
+        evolutionMap[
+          versionId
+        ] = {
+          fifa_version: {
+            id: fifa.id,
+            version_number:
+              fifa.version_number,
+            year:
+              fifa.year,
+          },
+
+          skills: {},
+        };
+      }
+
+      // agregar skill
+      evolutionMap[
+        versionId
+      ].skills[
+        skill.name
+      ] = row.value;
+    }
+
+    return Object.values(
+      evolutionMap,
+    );
+  }
+
 
   async create(data: CreatePlayerDto) {
     const existingPlayer = await this.playerModel.findOne({
@@ -419,5 +619,7 @@ export class PlayerService {
       success: true,
     };
   }
+
+
 
 }

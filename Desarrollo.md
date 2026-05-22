@@ -55,11 +55,13 @@ MEJORAR
 
     4 - Funcionalidad de exportar jugadores a excel
 
-    5 - Desarrollo y funcionamiento de formulario para crear o editar un jugador
+    5 - Desarrollo y funcionamiento de formulario para crear o editar un jugador. 
 
     6 - Desarrollo y funcionamiento de página de un jugador. Con gráficos y linea de tiempo.
 
-    7 - Incorporar a la línea de tiempo un análisis narrativo automático sobre la trayectoria del jugador.
+    7 - En página de jugador, crear formulario para editar habilidades, según las vesiones de fifa. En caso de jugadores nuevos, si no tiene ya habilidades para esa versión las crea.
+
+    8 - Incorporar a la línea de tiempo un análisis narrativo automático sobre la trayectoria del jugador.
         Ej: "A partir de 2019 se nota una baja en su aceleración, compensada por una mejora en la visión de juego"
 
 #Video de demostración

@@ -1,51 +1,19 @@
-import {
-  Component,
-  OnInit,
-} from '@angular/core';
-
-
-import {
-  CommonModule,
-} from '@angular/common';
-
-import {
-  FormsModule,
-} from '@angular/forms';
-
+import { Component, OnInit, } from '@angular/core';
+import { CommonModule, } from '@angular/common';
+import { FormsModule, } from '@angular/forms';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { PositionsService, } from '../../core/services/position.service';
+import { ClubsService, } from '../../core/services/clubs.service';
+import { FifaVersionService, } from '../../core/services/fifaversion.service';
+import { PlayersService, } from '../../core/services/players.service';
+import { Position, } from '../../shared/models/position.model';
+import { Club, } from '../../shared/models/club.model';
+import { FifaVersion, } from '../../shared/models/fifaversion.model';
+import { Player, } from '../../shared/models/player.model';
+import { PlayerModalComponent } from '../../components/player-modal/player-modal.component';
+import { Router } from '@angular/router';
 
-import {
-  PositionsService,
-} from '../../core/services/position.service';
-
-import {
-  ClubsService,
-} from '../../core/services/clubs.service';
-
-import {
-  FifaVersionService,
-} from '../../core/services/fifaversion.service';
-
-import {
-  PlayersService,
-} from '../../core/services/players.service';
-
-import {
-  Position,
-} from '../../shared/models/position.model';
-
-import {
-  Club,
-} from '../../shared/models/club.model';
-
-import {
-  FifaVersion,
-} from '../../shared/models/fifaversion.model';
-
-import {
-  Player,
-} from '../../shared/models/player.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -53,12 +21,14 @@ import {
   imports: [
     CommonModule,
     FormsModule,
+    PlayerModalComponent,
   ],
   templateUrl:
     './dashboard.component.html',
 })
-export class DashboardComponent
-  implements OnInit {
+
+
+export class DashboardComponent implements OnInit {
 
   positions: string[] = [];
   fifaVersions: FifaVersion[] = [];
@@ -75,19 +45,15 @@ export class DashboardComponent
   loading = false;
   search = '';
   totalPlayers = 0;
+  modalOpen = false;
+  editingPlayer: any = null;
 
   constructor(
-    private positionsService:
-      PositionsService,
-
-    private clubsService:
-      ClubsService,
-
-    private fifaVersionService:
-      FifaVersionService,
-
-    private playersService:
-      PlayersService,
+    private positionsService: PositionsService,
+    private clubsService: ClubsService,
+    private fifaVersionService: FifaVersionService,
+    private playersService: PlayersService,
+    private router: Router,
   ) { }
 
   ngOnInit() {
@@ -216,7 +182,6 @@ export class DashboardComponent
     this.page = 0;
     this.loadPlayers();
   }
-
 
   selectClub(
     clubId: string,
@@ -395,4 +360,112 @@ export class DashboardComponent
         )}.xlsx`,
     );
   }
+
+  // Funciones del modal para crear o editar jugadores
+  openCreate() {
+    this.editingPlayer =
+      null;
+
+    this.modalOpen =
+      true;
+  }
+
+  openEdit(player: any) {
+
+    console.log("openEdit", player);
+    
+    this.editingPlayer =
+      player;
+
+    this.modalOpen =
+      true;
+  }
+
+  savePlayer(
+    data: any,
+  ) {
+
+    console.log("savePlayer", data);
+    
+    const isEdit = !!this.editingPlayer;
+
+    const request =
+      isEdit
+        ? this.playersService.update(
+          this.editingPlayer.id,
+          data,
+        )
+        : this.playersService.create(
+          data,
+        );
+
+    request.subscribe({
+      next: (res: any) => {
+
+        console.log(
+          'savePlayer response',
+          res,
+        );
+
+        this.modalOpen =
+          false;
+
+        // ===== EDIT =====
+        if (isEdit) {
+
+          this.loadPlayers();
+
+          return;
+        }
+
+        // ===== CREATE =====
+
+        const playerId =
+          res?.id ||
+          res?.player?.id ||
+          res?.data?.id;
+
+        console.log(
+          'NEW PLAYER ID',
+          playerId,
+        );
+
+        if (playerId) {
+
+          this.router.navigate([
+            '/player',
+            playerId,
+          ]);
+
+          return;
+        }
+
+        console.error(
+          'No player id returned',
+          res,
+        );
+
+        this.loadPlayers();
+      },
+
+      error: (err) => {
+
+        console.error(
+          'savePlayer error',
+          err,
+        );
+      },
+    });
+  }
+
+  openPlayer(
+    player: any,
+  ) {
+    this.router.navigate([
+      '/player',
+      player.id,
+    ]);
+  }
+
+
 }

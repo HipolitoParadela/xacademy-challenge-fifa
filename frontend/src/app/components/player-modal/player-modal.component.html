@@ -1,0 +1,87 @@
+<div *ngIf="visible" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+
+  <div class="w-full max-w-lg rounded-3xl bg-[#111827] border border-[#1F2937] p-6">
+
+    <div class="flex justify-between mb-6">
+
+      <h2 class="text-2xl text-white font-bold">
+
+        {{ player ? 'Editar jugador' : 'Nuevo jugador' }}
+
+      </h2>
+
+      <button (click)="close.emit()" class="text-gray-400">
+        ✕
+      </button>
+
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4">
+      <div>
+
+        <label class="text-sm text-gray-400">
+          ID Externo
+        </label>
+
+        <input formControlName="external_id" class="w-full rounded-2xl bg-[#1A222E] border border-[#263241] px-4 py-3"/>
+
+      </div>
+      <div>
+
+        <label class="text-sm text-gray-400">
+          Nombre
+        </label>
+
+        <input formControlName="name" class="w-full rounded-2xl bg-[#1A222E] border border-[#263241] px-4 py-3" />
+
+      </div>
+
+      <div>
+
+        <label class="text-sm text-gray-400">
+          Género
+        </label>
+
+        <select formControlName="genero" class="w-full rounded-2xl bg-[#1A222E] border border-[#263241] px-4 py-3">
+
+          <option value="male">
+            Hombre
+          </option>
+
+          <option value="female">
+            Mujer
+          </option>
+
+        </select>
+
+      </div>
+
+      <div>
+
+        <label class="text-sm text-gray-400">
+          Imagen
+        </label>
+
+        <input formControlName="image" class="w-full rounded-2xl bg-[#1A222E] border border-[#263241] px-4 py-3" />
+
+      </div>
+
+      <div class="flex justify-end gap-3 pt-4">
+
+        <button type="button" (click)="close.emit()" class="px-5 py-3 rounded-2xl bg-[#1A222E]">
+          Cancelar
+        </button>
+
+        <button type="submit" class="px-5 py-3 rounded-2xl bg-[#00FF9D] text-black font-semibold">
+
+          {{ player ? 'Guardar' : 'Crear' }}
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>

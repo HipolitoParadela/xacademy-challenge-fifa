@@ -1,0 +1,246 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+
+  <div
+    class="w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-3xl border border-slate-700 bg-[#081327] shadow-2xl">
+    <div class="max-h-[90vh] overflow-y-auto p-6 custom-scroll">
+      <div class="mb-6 flex items-center justify-between">
+
+        <h2 class="text-2xl font-bold text-white">
+          Editar Habilidades
+        </h2>
+
+        <button (click)="close.emit()" class="text-slate-400 hover:text-white">
+          ✕
+        </button>
+
+      </div>
+
+      <!-- VERSION -->
+
+      <div class="mb-6">
+
+        <label class="mb-2 block text-sm text-slate-400">
+
+          FIFA Version
+
+        </label>
+
+        <select [(ngModel)]="selectedVersion" (change)="loadSkills()"
+          class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
+
+          <option *ngFor="let v of versions" [ngValue]="v.id">
+            FIFA
+            {{ v.version_number }}
+
+          </option>
+
+        </select>
+
+      </div>
+
+      <!-- SLIDERS -->
+
+      <div class="space-y-5">
+
+        <!-- SKILLS -->
+
+        <ng-container *ngFor="
+      let item of [
+        ['pace','PACE'],
+        ['shooting','SHO'],
+        ['passing','PAS'],
+        ['dribbling','DRI'],
+        ['defending','DEF'],
+        ['physic','PHY'],
+        ['overall','OVR'],
+        ['potential','POT']
+      ]
+    ">
+
+          <div>
+
+            <div class="mb-2 flex justify-between">
+
+              <span class="font-medium text-slate-300">
+
+                {{ item[1] }}
+
+              </span>
+
+              <span class="text-[#00FF9D]">
+
+                {{
+                skills[item[0]]
+                }}
+
+              </span>
+
+            </div>
+
+            <input type="range" min="0" max="100" [(ngModel)]="
+          skills[item[0]]
+        " class="w-full accent-[#00FF9D]" />
+
+          </div>
+
+        </ng-container>
+
+        <!-- EXTRA DATA -->
+
+        <div class="mt-8 border-t border-slate-700 pt-6">
+
+          <h3 class="mb-4 text-lg font-semibold text-white">
+
+            Player Data
+
+          </h3>
+
+          <!-- AGE -->
+
+          <div class="mb-5">
+
+            <div class="mb-2 flex justify-between">
+
+              <span class="text-slate-300">
+
+                Age
+
+              </span>
+
+              <span class="text-[#00FF9D]">
+
+                {{ skills.age }}
+
+              </span>
+
+            </div>
+
+            <input type="range" min="15" max="45" [(ngModel)]="
+          skills.age
+        " class="w-full accent-[#00FF9D]" />
+
+          </div>
+
+          <!-- VALUE -->
+
+          <div class="mb-5">
+
+            <label class="mb-2 block text-slate-300">
+
+              Value (€)
+
+            </label>
+
+            <input type="number" [(ngModel)]="
+          skills.value_eur
+        " class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white" />
+
+          </div>
+
+          <!-- POSITION -->
+
+          <div class="mb-5">
+
+            <label class="mb-2 block text-slate-300">
+
+              Position
+
+            </label>
+
+            <select [(ngModel)]="
+          skills.player_positions
+        " class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
+
+              <option value="GK">
+                GK
+              </option>
+
+              <option value="CB">
+                CB
+              </option>
+
+              <option value="LB">
+                LB
+              </option>
+
+              <option value="RB">
+                RB
+              </option>
+
+              <option value="CDM">
+                CDM
+              </option>
+
+              <option value="CM">
+                CM
+              </option>
+
+              <option value="CAM">
+                CAM
+              </option>
+
+              <option value="LM">
+                LM
+              </option>
+
+              <option value="RM">
+                RM
+              </option>
+
+              <option value="LW">
+                LW
+              </option>
+
+              <option value="RW">
+                RW
+              </option>
+
+              <option value="ST">
+                ST
+              </option>
+
+            </select>
+
+          </div>
+
+          <!-- CLUB -->
+
+          <div>
+
+            <label class="mb-2 block text-slate-300">
+
+              Club Team ID
+
+            </label>
+
+            <input type="number" [(ngModel)]="
+          skills.club_team_id
+        " class="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white" />
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ACTIONS -->
+
+      <div class="mt-8 flex justify-end gap-3">
+
+        <button (click)="close.emit()" class="rounded-xl border border-slate-700 px-5 py-2 text-slate-300">
+
+          Cancel
+
+        </button>
+
+        <button (click)="save()" class="rounded-xl bg-[#00FF9D] px-5 py-2 font-semibold text-black">
+
+          Save
+
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+</div>

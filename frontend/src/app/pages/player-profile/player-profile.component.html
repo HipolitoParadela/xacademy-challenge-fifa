@@ -1,0 +1,522 @@
+<div *ngIf="profile" class="min-h-screen bg-[#090E13] p-5 text-white">
+
+  <!-- HERO -->
+
+  <div class="rounded-[36px]
+    border border-[#1F2937]
+    bg-gradient-to-br
+    from-[#0B1220]
+    via-[#08142A]
+    to-[#0E1D35]
+    mb-6 overflow-hidden">
+
+    <div class="p-8 flex flex-col lg:flex-row gap-8 items-center">
+
+      <div class="relative">
+
+        <img [src]="profile.image" class="w-44 h-44 rounded-[32px]
+          object-cover
+          border-2 border-[#00FF9D]
+          shadow-[0_0_30px_rgba(0,255,157,.25)]" crossorigin="anonymous">
+
+        <div class="absolute
+          -top-3 -left-3
+          w-16 h-16
+          rounded-2xl
+          bg-[#00FF9D]
+          text-black
+          flex items-center
+          justify-center
+          font-black text-3xl">
+
+          {{ skills.overall }}
+
+        </div>
+
+      </div>
+
+      <div class="flex-1">
+
+        <div class="flex gap-2 mb-2">
+
+          <span class="px-3 py-1 rounded-full
+            bg-[#00FF9D]/15
+            text-[#00FF9D] text-sm">
+
+            {{ skills?.player_positions }}
+
+          </span>
+
+          <span class="px-3 py-1 rounded-full
+            bg-[#1A222E] text-sm">
+
+            <span *ngIf="profile?.player?.genero as genero">
+              {{
+              genero === 'male'
+              ? 'Varón'
+              : genero === 'female'
+              ? 'Mujer'
+              : ''
+              }}
+            </span>
+
+          </span>
+
+        </div>
+
+        <h1 class="text-5xl font-black">
+
+          {{ profile?.player?.name }}
+
+        </h1>
+
+        <div class="text-lg text-gray-300 mt-2">
+
+          {{ profile.club }}
+
+          ·
+
+          FIFA
+          {{ profile.fifa_version?.version_number }}
+          ({{ profile.fifa_version?.year }})
+
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-4 mt-6">
+
+          <div class="rounded-2xl bg-[#111827]/70 p-4">
+
+            <div class="text-xs text-gray-400">
+              Edad
+            </div>
+
+            <div class="text-2xl font-bold">
+
+              {{ skills.age }}
+
+            </div>
+
+          </div>
+
+          <div class="rounded-2xl bg-[#111827]/70 p-4">
+
+            <div class="text-xs text-gray-400">
+              Potencial
+            </div>
+
+            <div class="text-2xl font-bold
+              text-[#00FF9D]">
+
+              {{ skills.potential }}
+
+            </div>
+
+          </div>
+
+          <div class="rounded-2xl bg-[#111827]/70 p-4">
+
+            <div class="text-xs text-gray-400">
+              Valor
+            </div>
+
+            <div class="text-xl font-bold">
+
+              €
+              {{ skills.value_eur | number }}
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+      <div class="flex items-center gap-3">
+        <button (click)="showEditor=true" class="px-5 py-3 rounded-2xl
+          bg-[#1A222E]
+          hover:bg-[#243042]">
+          Editar
+        </button>
+        <button (click)="goBack()" class="px-5 py-3 rounded-2xl
+          bg-[#1A222E]
+          hover:bg-[#243042]">
+
+          Volver
+
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FIFA TIMELINE -->
+
+  <div class="flex gap-3 overflow-auto mb-6">
+
+    <button *ngFor="let v of versions" (click)="changeVersion(v.id)" [ngClass]="
+        selectedVersion === v.id
+        ? 'bg-[#00FF9D] text-black'
+        : 'bg-[#1A222E] text-white'
+      " class="px-5 py-3 rounded-2xl
+      whitespace-nowrap
+      font-semibold">
+
+      FIFA {{ v.version_number }}
+
+    </button>
+
+  </div>
+
+  <!-- GRID -->
+
+  <div class="grid lg:grid-cols-2 gap-6">
+
+    <!-- VALORACIONES -->
+    <div class="rounded-3xl
+      bg-[#111827]
+      border border-[#1F2937]
+      p-6">
+
+      <div class="flex items-center justify-between mb-6">
+
+        <h2 class="font-bold text-xl">
+
+          Valoraciones
+
+        </h2>
+
+        <div class="text-xs uppercase tracking-widest
+      text-[#00FF9D]">
+
+          FIFA Atributos
+
+        </div>
+
+      </div>
+
+      <div class="space-y-5">
+
+        <div *ngFor="let s of [
+        {k:'PAC',label:'Pace',v:+skills.pace || 0},
+        {k:'SHO',label:'Shooting',v:+skills.shooting || 0},
+        {k:'PAS',label:'Passing',v:+skills.passing || 0},
+        {k:'DRI',label:'Dribbling',v:+skills.dribbling || 0},
+        {k:'DEF',label:'Defending',v:+skills.defending || 0},
+        {k:'PHY',label:'Physical',v:+skills.physic || 0}
+      ]" class="group">
+
+          <!-- header -->
+
+          <div class="flex items-center justify-between mb-2">
+
+            <div class="flex items-center gap-3">
+
+              <div class="w-11 h-11
+            rounded-2xl
+            bg-[#1A222E]
+            border border-[#263241]
+            flex items-center justify-center
+            font-black text-sm
+            text-[#00FF9D]">
+
+                {{ s.k }}
+
+              </div>
+
+              <div>
+
+                <div class="text-sm font-semibold">
+
+                  {{ s.label }}
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- score -->
+
+            <div class="text-2xl font-black" [ngClass]="
+            s.v >= 85
+              ? 'text-[#00FF9D]'
+              : s.v >= 70
+              ? 'text-yellow-400'
+              : 'text-red-400'
+          ">
+
+              {{ s.v }}
+
+            </div>
+
+          </div>
+
+          <!-- bar -->
+
+          <div class="relative h-4
+        rounded-full
+        overflow-hidden
+        bg-[#1A222E]
+        border border-[#243042]">
+
+            <!-- glow -->
+
+            <div class="absolute inset-y-0 left-0
+          rounded-full
+          blur-md opacity-50" [style.width.%]="s.v" [ngClass]="
+            s.v >= 85
+              ? 'bg-[#00FF9D]'
+              : s.v >= 70
+              ? 'bg-yellow-400'
+              : 'bg-red-400'
+          ">
+            </div>
+
+            <!-- fill -->
+
+            <div class="relative h-full
+          rounded-full
+          transition-all duration-500" [style.width.%]="s.v" [ngClass]="
+            s.v >= 85
+              ? 'bg-[#00FF9D]'
+              : s.v >= 70
+              ? 'bg-yellow-400'
+              : 'bg-red-400'
+          ">
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RADAR de habilidades -->
+    <div class="rounded-3xl
+  bg-[#111827]
+  border border-[#1F2937]
+  p-6
+  relative overflow-hidden">
+
+      <!-- glow -->
+
+      <div class="absolute inset-0
+    bg-[radial-gradient(circle_at_top_right,rgba(0,255,157,.08),transparent_40%)]">
+      </div>
+
+      <div class="relative z-10">
+
+        <!-- header -->
+
+        <div class="flex items-center
+      justify-between
+      mb-5">
+
+          <div>
+
+            <h2 class="font-bold text-xl">
+
+              Skill Radar
+
+            </h2>
+
+            <div class="text-sm text-gray-400">
+
+              FIFA performance
+
+            </div>
+
+          </div>
+
+          <!-- overall -->
+
+          <div class="w-16 h-16
+        rounded-2xl
+        bg-[#00FF9D]/15
+        border border-[#00FF9D]/30
+        flex flex-col
+        items-center justify-center">
+
+            <div class="text-[11px]
+          uppercase tracking-wider
+          text-[#00FF9D]">
+
+              OVR
+
+            </div>
+
+            <div class="text-2xl
+          font-black
+          text-[#00FF9D]">
+
+              {{ skills.overall }}
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- radar -->
+
+        <div class="h-[380px]
+      flex items-center
+      justify-center">
+
+          <canvas baseChart type="radar" [data]="radarData" [options]="radarOptions">
+          </canvas>
+
+        </div>
+
+        <!-- footer stats -->
+
+        <div class="grid grid-cols-3
+      gap-3 mt-5">
+
+          <div class="rounded-2xl
+        bg-[#1A222E]
+        p-3 text-center">
+
+            <div class="text-xs text-gray-400">
+
+              Pases
+
+            </div>
+
+            <div class="font-bold
+          text-[#00FF9D]">
+
+              {{ skills.pace }}
+
+            </div>
+
+          </div>
+
+          <div class="rounded-2xl
+        bg-[#1A222E]
+        p-3 text-center">
+
+            <div class="text-xs text-gray-400">
+
+              Regate
+
+            </div>
+
+            <div class="font-bold
+          text-[#00FF9D]">
+
+              {{ skills.dribbling }}
+
+            </div>
+
+          </div>
+
+          <div class="rounded-2xl
+            bg-[#1A222E]
+            p-3 text-center">
+
+            <div class="text-xs text-gray-400">
+
+              Tiros
+
+            </div>
+
+            <div class="font-bold
+          text-[#00FF9D]">
+
+              {{ skills.shooting }}
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- EVOLUTION -->
+
+  <!-- EVOLUTION + AI ANALYSIS -->
+
+  <div class="mt-8 rounded-3xl border border-slate-800 bg-[#081327] p-6">
+
+    <h2 class="mb-6 text-2xl font-bold text-white">
+      Evolución en FIFA
+    </h2>
+
+    <div class="grid gap-6 lg:grid-cols-3">
+
+      <!-- CHART -->
+
+      <div class="lg:col-span-2">
+
+        <div class="h-[420px]">
+
+          <canvas baseChart [data]="evolutionData" [options]="lineOptions" [type]="'line'">
+          </canvas>
+
+        </div>
+      </div>
+
+      <!-- AI PANEL -->
+
+      <div class="rounded-2xl border border-slate-700 bg-[#0B1830] p-5">
+
+        <div class="mb-4 flex items-center gap-2">
+
+          <div class="h-2 w-2 rounded-full bg-[#00FF9D]">
+          </div>
+
+          <h3 class="text-lg font-semibold text-white">
+            Análisis de Evolución
+          </h3>
+
+        </div>
+
+        <div class="space-y-4 text-sm leading-6 text-slate-300">
+
+          <p>
+            AI evaluation pending.
+          </p>
+
+          <p>
+            This panel will analyze the
+            player's evolution across FIFA
+            versions and identify trends,
+            strengths and decline areas.
+          </p>
+
+          <div class="rounded-xl border border-slate-700 bg-slate-900/50 p-3">
+
+            <div class="text-xs uppercase tracking-wider text-slate-500">
+              Preview
+            </div>
+
+            <div class="mt-2 text-slate-200">
+
+              Passing improved steadily
+              between FIFA 18 and FIFA 22,
+              while physical performance
+              declined slightly in recent
+              versions.
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<app-player-skills-editor *ngIf="showEditor" [playerId]="playerId" (close)="showEditor=false" (saved)="reloadProfile()">
+</app-player-skills-editor>

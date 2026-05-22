@@ -5,6 +5,8 @@ import {
 } from 'class-validator';
 
 export class CreatePlayerDto {
+
+
   @IsNotEmpty()
   external_id!: number;
 

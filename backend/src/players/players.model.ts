@@ -6,7 +6,7 @@ import {
   HasMany
 } from 'sequelize-typescript';
 
-import { Skill } from '../skills/skill.model';
+
 import { PlayerSkill } from '../player-skills/player-skill.model';
 
 
@@ -90,4 +90,6 @@ export class Player extends Model<PlayerAttributes> {
   )
   declare clubFilter:
     PlayerSkill[];
+
+  
 }

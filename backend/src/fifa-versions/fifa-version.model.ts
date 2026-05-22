@@ -21,12 +21,12 @@ export class FifaVersion extends Model {
 
     allowNull: false,
   })
-  version_number!: number;
+  declare version_number: number;
 
   @Column({
     type: DataType.INTEGER,
 
     allowNull: false,
   })
-  year!: number;
+  declare year: number;
 }

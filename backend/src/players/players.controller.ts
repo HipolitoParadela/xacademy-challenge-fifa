@@ -85,4 +85,23 @@ export class PlayerController {
   ) {
     return this.playerService.delete(id);
   }
+
+  @Get(':id/profile')
+  async getProfile(
+    @Param('id') id: string,
+  ) {
+    return this.playerService.getProfile(
+      Number(id),
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':id/evolution')
+  async getEvolution(
+    @Param('id') id: string,
+  ) {
+    return this.playerService.getEvolution(
+      Number(id),
+    );
+  }
 }

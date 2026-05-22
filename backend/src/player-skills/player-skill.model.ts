@@ -47,8 +47,17 @@ export class PlayerSkill extends Model<PlayerSkillAttributes> {
   })
   declare fifa_version_id: number;
 
-  @BelongsTo(() => FifaVersion)
+  @BelongsTo(() => FifaVersion, {
+    foreignKey: 'fifa_version_id',
+    as: 'fifaVersion',
+  })
   declare fifaVersion: FifaVersion;
+
+  @BelongsTo(() => Skill, {
+    foreignKey: 'skill_id',
+    as: 'skill',
+  })
+  declare skill: Skill;
 
   @ForeignKey(() => Skill)
   @Column({
@@ -57,8 +66,7 @@ export class PlayerSkill extends Model<PlayerSkillAttributes> {
   })
   declare skill_id: number;
 
-  @BelongsTo(() => Skill)
-  declare skill: Skill;
+
 
   @Column({
     type: DataType.STRING,
