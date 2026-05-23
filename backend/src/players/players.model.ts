@@ -91,5 +91,5 @@ export class Player extends Model<PlayerAttributes> {
   declare clubFilter:
     PlayerSkill[];
 
-  
+
 }

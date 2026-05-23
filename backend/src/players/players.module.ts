@@ -1,14 +1,38 @@
-import { Module } from '@nestjs/common';
-import { SequelizeModule } from '@nestjs/sequelize';
+import {
+  Module,
+} from '@nestjs/common';
 
-import { PlayerController } from './players.controller';
-import { PlayerService } from './players.service';
+import {
+  SequelizeModule,
+} from '@nestjs/sequelize';
 
-import { Player } from './players.model';
-import { PlayerSkill } from '../player-skills/player-skill.model';
-import { Skill } from '../skills/skill.model';
-import { Club } from '../clubs/club.model';
-import { FifaVersion } from '../fifa-versions/fifa-version.model';
+import {
+  PlayerController,
+} from './players.controller';
+
+import {
+  PlayerService,
+} from './players.service';
+
+import {
+  Player,
+} from './players.model';
+
+import {
+  PlayerSkill,
+} from '../player-skills/player-skill.model';
+
+import {
+  Skill,
+} from '../skills/skill.model';
+
+import {
+  Club,
+} from '../clubs/club.model';
+
+import {
+  FifaVersion,
+} from '../fifa-versions/fifa-version.model';
 
 @Module({
   imports: [
@@ -20,7 +44,19 @@ import { FifaVersion } from '../fifa-versions/fifa-version.model';
       FifaVersion,
     ]),
   ],
-  controllers: [PlayerController],
-  providers: [PlayerService],
+
+  controllers: [
+    PlayerController,
+  ],
+
+  providers: [
+    PlayerService,
+  ],
+
+  // ← IMPORTANTE
+  exports: [
+    PlayerService,
+  ],
 })
-export class PlayerModule {}
+export class
+  PlayerModule {}

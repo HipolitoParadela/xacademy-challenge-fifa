@@ -36,6 +36,8 @@ import { PlayersService } from '../../core/services/players.service';
 import { FifaVersionService } from '../../core/services/fifaversion.service';
 import { PlayerSkillsService } from '../../core/services/player-skills.service';
 import { PlayerSkillsEditorComponent } from '../../components/player-skills-editor/player-skills-editor.component';
+import { AiService } from '../../core/services/ai.service';
+
 ChartJS.register(
   RadialLinearScale,
   PointElement,
@@ -79,6 +81,9 @@ export class PlayerProfileComponent
   private skillsService =
     inject(PlayerSkillsService);
 
+  private aiService =
+    inject(AiService);
+
   playerId = 0;
   profile: any = {};
   versions: any[] = [];
@@ -86,10 +91,14 @@ export class PlayerProfileComponent
   skills: any = {};
   evolution: any[] = [];
   showEditor = false;
+  aiInsight = '';
+  loadingInsight = false;
+  insightCached = false;
 
   reloadProfile() {
     this.loadProfile();
     this.loadEvolution();
+    this.loadInsight();
   }
 
   radarData:
@@ -261,6 +270,7 @@ export class PlayerProfileComponent
     this.loadProfile();
     this.loadVersions();
     this.loadEvolution();
+    this.loadInsight();
   }
 
   loadProfile() {
@@ -619,5 +629,93 @@ export class PlayerProfileComponent
     this.router.navigate([
       '/dashboard',
     ]);
+  }
+
+  loadInsight() {
+
+    console.log("loadInsight");
+
+    this.loadingInsight =
+      true;
+
+    this.aiService
+      .getPlayerInsight(
+        this.playerId,
+      )
+      .subscribe({
+        next: (
+          res: any,
+        ) => {
+
+          console.log(
+            'AI insight',
+            res,
+          );
+
+          this.aiInsight =
+            res.summary || '';
+
+          this.insightCached =
+            !!res.cached;
+
+          this.loadingInsight =
+            false;
+        },
+
+        error: (
+          err,
+        ) => {
+
+          console.error(
+            err,
+          );
+
+          this.loadingInsight =
+            false;
+        },
+      });
+  }
+
+  regenerateInsight() {
+
+    this.loadingInsight =
+      true;
+
+    this.aiService
+      .regeneratePlayerInsight(
+        this.playerId,
+      )
+      .subscribe({
+        next: (
+          res: any,
+        ) => {
+
+          console.log(
+            'AI regenerate',
+            res,
+          );
+
+          this.aiInsight =
+            res.summary || '';
+
+          this.insightCached =
+            false;
+
+          this.loadingInsight =
+            false;
+        },
+
+        error: (
+          err,
+        ) => {
+
+          console.error(
+            err,
+          );
+
+          this.loadingInsight =
+            false;
+        },
+      });
   }
 }

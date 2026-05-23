@@ -14,7 +14,7 @@
 
       <div class="relative">
 
-        <img [src]="profile.image" class="w-44 h-44 rounded-[32px]
+        <img [src]="profile?.player?.image" class="w-44 h-44 rounded-[32px]
           object-cover
           border-2 border-[#00FF9D]
           shadow-[0_0_30px_rgba(0,255,157,.25)]" crossorigin="anonymous">
@@ -467,50 +467,63 @@
 
       <!-- AI PANEL -->
 
-      <div class="rounded-2xl border border-slate-700 bg-[#0B1830] p-5">
+      <div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 backdrop-blur-xl min-h-[320px] flex flex-col">
 
-        <div class="mb-4 flex items-center gap-2">
+        <div class="mb-4 flex items-center justify-between">
 
-          <div class="h-2 w-2 rounded-full bg-[#00FF9D]">
+          <div>
+
+            <h3 class="text-lg font-bold text-white">
+
+              Análisis IA
+
+            </h3>
+
+            <p class="text-xs text-slate-400">
+
+              Evolución narrativa del jugador
+
+            </p>
+
           </div>
 
-          <h3 class="text-lg font-semibold text-white">
-            Análisis de Evolución
-          </h3>
+          <button (click)="regenerateInsight()" [disabled]="loadingInsight"
+            class="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300 transition hover:bg-emerald-500/20">
+
+            ↻ Regenerar
+
+          </button>
 
         </div>
 
-        <div class="space-y-4 text-sm leading-6 text-slate-300">
+        <!-- loading -->
 
-          <p>
-            AI evaluation pending.
+        <div *ngIf="loadingInsight" class="flex flex-1 items-center justify-center text-slate-400">
+
+          Generando análisis...
+
+        </div>
+
+        <!-- content -->
+
+        <div *ngIf="!loadingInsight" class="flex-1">
+
+          <p class="leading-7 text-slate-200">
+
+            {{ aiInsight }}
+
           </p>
 
-          <p>
-            This panel will analyze the
-            player's evolution across FIFA
-            versions and identify trends,
-            strengths and decline areas.
-          </p>
+          <div class="mt-4 text-xs text-slate-500">
 
-          <div class="rounded-xl border border-slate-700 bg-slate-900/50 p-3">
+            {{ insightCached
+            ? 'resultado cacheado'
+            : 'resultado generado recientemente' }}
 
-            <div class="text-xs uppercase tracking-wider text-slate-500">
-              Preview
-            </div>
-
-            <div class="mt-2 text-slate-200">
-
-              Passing improved steadily
-              between FIFA 18 and FIFA 22,
-              while physical performance
-              declined slightly in recent
-              versions.
-
-            </div>
           </div>
 
         </div>
+
       </div>
 
     </div>

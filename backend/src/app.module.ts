@@ -13,6 +13,7 @@ import { FifaVersionsModule } from './fifa-versions/fifa-versions.module';
 import { PlayerSkillModule } from './player-skills/player-skill.module';
 import { PlayerModule } from './players/players.module';
 import { PositionsModule } from './positions/position.module';
+import { AiModule, } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { PositionsModule } from './positions/position.module';
       }),
     }),
 
+    AiModule,
     AuthModule,
     ClubsModule,
     FifaVersionsModule,
