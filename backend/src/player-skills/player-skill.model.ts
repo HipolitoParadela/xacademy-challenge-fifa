@@ -25,6 +25,7 @@ interface PlayerSkillAttributes {
   timestamps: false,
 })
 export class PlayerSkill extends Model<PlayerSkillAttributes> {
+  
   @Column({
     type: DataType.INTEGER,
     autoIncrement: true,
@@ -39,7 +40,6 @@ export class PlayerSkill extends Model<PlayerSkillAttributes> {
   })
   declare player_id: number;
 
-
   @ForeignKey(() => FifaVersion)
   @Column({
     type: DataType.INTEGER,
@@ -47,6 +47,13 @@ export class PlayerSkill extends Model<PlayerSkillAttributes> {
   })
   declare fifa_version_id: number;
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  declare value: string;
+
+  
   @BelongsTo(() => FifaVersion, {
     foreignKey: 'fifa_version_id',
     as: 'fifaVersion',
@@ -67,12 +74,7 @@ export class PlayerSkill extends Model<PlayerSkillAttributes> {
   declare skill_id: number;
 
 
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  declare value: string;
+  
 
   @BelongsTo(
     () => Player,

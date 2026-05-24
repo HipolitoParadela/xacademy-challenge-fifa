@@ -15,6 +15,7 @@ import { FifaVersion } from '../fifa-versions/fifa-version.model';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
 
+
 @Injectable()
 export class PlayerService {
 
@@ -382,10 +383,13 @@ export class PlayerService {
     return player;
   }
 
+
   async getProfile(
     playerId: number,
   ) {
-    // jugador base
+
+    // ===== PLAYER =====
+
     const player =
       await this.playerModel.findByPk(
         playerId,
@@ -395,7 +399,8 @@ export class PlayerService {
       return null;
     }
 
-    // ultima version fifa conocida para ese jugador
+    // ===== LATEST FIFA VERSION =====
+
     const latestSkill =
       await this.playerSkillModel.findOne({
         where: {
@@ -416,17 +421,23 @@ export class PlayerService {
 
         order: [
           [
-            'fifaVersion',
+            {
+              model: FifaVersion,
+              as: 'fifaVersion',
+            },
             'version_number',
             'DESC',
           ],
         ],
       });
 
-    if (!latestSkill?.fifaVersion) {
+    if (
+      !latestSkill?.fifaVersion
+    ) {
       return {
         player,
         fifa_version: null,
+        club: null,
         skills: {},
       };
     }
@@ -434,11 +445,17 @@ export class PlayerService {
     const fifaVersionId =
       latestSkill.fifaVersion.id;
 
-    // todas las skills de esa version
+    // ===== SKILLS =====
+
+    const skills:
+      Record<string, any> = {};
+
     const skillsRows =
       await this.playerSkillModel.findAll({
         where: {
-          player_id: playerId,
+          player_id:
+            playerId,
+
           fifa_version_id:
             fifaVersionId,
         },
@@ -447,28 +464,78 @@ export class PlayerService {
           {
             model: Skill,
             as: 'skill',
-            attributes: ['name'],
+            attributes: [
+              'name',
+            ],
           },
         ],
       });
 
-    const skills:
-      Record<string, string> = {};
+    for (
+      const row of
+      skillsRows as any[]
+    ) {
 
-    for (const row of skillsRows as any[]) {
-      if (row.skill?.name) {
+      if (
+        row.skill?.name
+      ) {
+
         skills[
           row.skill.name
         ] = row.value;
       }
     }
 
+    // ===== CLUB FROM club_team_id =====
+
+    let club: any = null;
+
+    if (
+      skills.club_team_id
+    ) {
+
+      const clubRow:
+        Club | null =
+        await this.clubModel.findOne({
+          where: {
+            external_id:
+              Number(
+                skills.club_team_id,
+              ),
+          },
+        });
+
+      if (clubRow) {
+
+        club = {
+          id:
+            clubRow.id,
+
+          name:
+            clubRow.name,
+
+          external_id:
+            clubRow.external_id,
+        };
+      }
+    }
+
+    // ===== RESPONSE =====
+
     return {
       player: {
-        id: player.id,
-        name: player.name,
-        image: player.image,
-        genero: player.genero,
+        id:
+          player.id,
+
+        name:
+          player.name,
+
+        image:
+          player.image,
+
+        genero:
+          player.genero,
+
         external_id:
           player.external_id,
       },
@@ -477,14 +544,18 @@ export class PlayerService {
         id:
           latestSkill
             .fifaVersion.id,
+
         version_number:
           latestSkill
             .fifaVersion
             .version_number,
+
         year:
           latestSkill
             .fifaVersion.year,
       },
+
+      club,
 
       skills,
     };

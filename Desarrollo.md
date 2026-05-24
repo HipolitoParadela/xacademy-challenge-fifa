@@ -76,7 +76,4 @@ Habiendo leido la consiga completa junto con los puntos extras, definí un camin
 
     5 - Permitir a la pagínación cargar diferentes cantidades de filas, 20, 50, 100, 200.
 
-
-
-# VIDEO DE DEMOSTRACIÓN
-
+## VIDEO DE DEMOSTRACIÓN

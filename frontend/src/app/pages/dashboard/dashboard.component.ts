@@ -13,7 +13,7 @@ import { FifaVersion, } from '../../shared/models/fifaversion.model';
 import { Player, } from '../../shared/models/player.model';
 import { PlayerModalComponent } from '../../components/player-modal/player-modal.component';
 import { Router } from '@angular/router';
-
+import { AuthService, } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -41,6 +41,7 @@ export class DashboardComponent implements OnInit {
   players: Player[] = [];
   total = 0;
   page = 0;
+  pageSize = 20;
   limit = 20;
   loading = false;
   search = '';
@@ -54,6 +55,7 @@ export class DashboardComponent implements OnInit {
     private fifaVersionService: FifaVersionService,
     private playersService: PlayersService,
     private router: Router,
+    private authService: AuthService,
   ) { }
 
   ngOnInit() {
@@ -107,9 +109,7 @@ export class DashboardComponent implements OnInit {
 
     this.loading = true;
 
-    console.log("loadPlayers", this.selectedClub, this.selectedFifa, this.selectedPositions, this.gender, this.search);
-
-
+    //console.log("loadPlayers", this.selectedClub, this.selectedFifa, this.selectedPositions, this.gender, this.search);
 
     this.playersService
       .getPlayers({
@@ -293,6 +293,19 @@ export class DashboardComponent implements OnInit {
     );
   }
 
+  changePageSize(
+    size: number,
+  ) {
+
+    this.pageSize =
+      Number(size);
+
+    // volver al inicio
+    this.page = 0;
+
+    this.loadPlayers();
+  }
+
   exportToExcel() {
     if (!this.players.length) {
       return;
@@ -373,7 +386,7 @@ export class DashboardComponent implements OnInit {
   openEdit(player: any) {
 
     console.log("openEdit", player);
-    
+
     this.editingPlayer =
       player;
 
@@ -386,7 +399,7 @@ export class DashboardComponent implements OnInit {
   ) {
 
     console.log("savePlayer", data);
-    
+
     const isEdit = !!this.editingPlayer;
 
     const request =
@@ -464,6 +477,24 @@ export class DashboardComponent implements OnInit {
     this.router.navigate([
       '/player',
       player.id,
+    ]);
+  }
+
+  onImageError(
+    event: any,
+  ) {
+
+    event.target.src =
+      'placeholdercuadrado2.png';
+  }
+
+  logout() {
+
+    this.authService
+      .logout();
+
+    this.router.navigate([
+      '/login',
     ]);
   }
 

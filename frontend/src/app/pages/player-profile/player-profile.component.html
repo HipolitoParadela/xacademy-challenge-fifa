@@ -14,10 +14,10 @@
 
       <div class="relative">
 
-        <img [src]="profile?.player?.image" class="w-44 h-44 rounded-[32px]
-          object-cover
-          border-2 border-[#00FF9D]
-          shadow-[0_0_30px_rgba(0,255,157,.25)]" crossorigin="anonymous">
+        <img [src]="profile?.player?.image" 
+          class="w-44 h-44 rounded-[32px] object-cover border-2 border-[#00FF9D] shadow-[0_0_30px_rgba(0,255,157,.25)]" 
+          (error)="onImageError($event)"
+          crossorigin="anonymous">
 
         <div class="absolute
           -top-3 -left-3
@@ -72,13 +72,13 @@
 
         <div class="text-lg text-gray-300 mt-2">
 
-          {{ profile.club }}
+          {{ profile?.club?.name }}
 
           ·
 
-          FIFA
-          {{ profile.fifa_version?.version_number }}
-          ({{ profile.fifa_version?.year }})
+          <!-- FIFA
+          {{ profile.fifa_version?.version_number }} -->
+          {{ profile.fifa_version?.year }}
 
         </div>
 

@@ -718,4 +718,12 @@ export class PlayerProfileComponent
         },
       });
   }
+
+  onImageError(
+    event: any,
+  ) {
+
+    event.target.src =
+      'placeholdercuadrado2.png';
+  }
 }

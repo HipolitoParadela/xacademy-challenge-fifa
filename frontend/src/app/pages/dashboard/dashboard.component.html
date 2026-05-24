@@ -188,6 +188,31 @@
           </div>
 
         </div>
+        <div class="mt-5">
+          <button (click)="logout()" class="flex items-center gap-2
+            px-4 py-2
+            rounded-2xl
+            bg-[#1A222E]
+            border border-[#243041]
+            hover:border-red-500
+            hover:bg-[#243041]
+            transition">
+
+            <!-- ICON -->
+
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H6a2 2 0 01-2-2V7a2 2 0 012-2h5a2 2 0 012 2v1" />
+            </svg>
+
+            <span>
+              Cerrar sesión
+            </span>
+
+          </button>
+        </div>
 
       </aside>
 
@@ -204,12 +229,12 @@
             <div>
 
               <h2 class="text-xl font-bold">
-                Players
+                Jugadores
               </h2>
 
               <p class="text-sm text-gray-400">
                 {{ players.length }}
-                of
+                de
                 {{ totalPlayers }}
                 players
               </p>
@@ -256,7 +281,7 @@
           </div>
 
           <!-- TABLA DE CONTENIDO -->
-          <div class="overflow-x-auto">
+          <div class="overflow-x-scroll">
 
             <table class="w-full min-w-[900px]">
 
@@ -311,6 +336,7 @@
                     <div class="flex items-center gap-4">
 
                       <img [src]="p.image || 'https://placehold.co/80'"
+                        (error)="onImageError($event)"
                         class="w-14 h-14 rounded-2xl object-cover border border-[#2A3442]" />
 
                       <div>
@@ -399,26 +425,65 @@
 
             <!-- RESULTS -->
 
-            <div class="text-sm text-gray-400">
+            <div class="flex items-center gap-4 flex-wrap text-sm text-gray-400">
 
-              Mostrando desde
-              <span class="text-white font-medium">
-                {{ startItem }}
-              </span>
+              <div>
+                Mostrando desde
+                <span class="text-white font-medium">
+                  {{ startItem }}
+                </span>
 
-              al
+                al
 
-              <span class="text-white font-medium">
-                {{ endItem }}
-              </span>
+                <span class="text-white font-medium">
+                  {{ endItem }}
+                </span>
 
-              de
+                de
 
-              <span class="text-[#00FF9D] font-semibold">
-                {{ totalPlayers }}
-              </span>
+                <span class="text-[#00FF9D] font-semibold">
+                  {{ totalPlayers }}
+                </span>
 
-              jugadores
+                jugadores
+              </div>
+
+              <!-- PAGE SIZE -->
+
+              <div class="flex items-center gap-2">
+
+                <span class="text-gray-500">
+                  Mostrar
+                </span>
+
+                <select [(ngModel)]="limit" (ngModelChange)="changePageSize($event)" class="rounded-xl
+                  bg-[#111827]
+                  border border-[#243041]
+                  px-3 py-2
+                  text-white
+                  outline-none
+                  hover:border-[#00FF9D]
+                  transition">
+
+                  <option [ngValue]="20">
+                    20
+                  </option>
+
+                  <option [ngValue]="50">
+                    50
+                  </option>
+
+                  <option [ngValue]="100">
+                    100
+                  </option>
+
+                  <option [ngValue]="250">
+                    250
+                  </option>
+
+                </select>
+
+              </div>
 
             </div>
 
