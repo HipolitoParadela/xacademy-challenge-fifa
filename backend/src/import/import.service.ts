@@ -193,6 +193,7 @@ export class ImportService {
             for (const row of rows) {
               try {
                 if (!row.player_id || !row.short_name) {
+                  console.log(`Fila inválida: ${JSON.stringify(row)}`);
                   continue; // Si no tiene player_id o short_name, no se procesa porque es un registro inválido
                 }
 

@@ -4,11 +4,15 @@
 
 ### hparadela67@gmail.com
 
-ME PRESENTO
+    Mi nombre es Hipolito Paradela, soy de Río Segundo Córdoba, trabajo en diseño web y programación desde el año 2012. Eh ido aprendiendo esta hermosa y desafiante profesión de manera autodidacta y pude en estos años ganarme la vida de esto de manera freelance. Siempre intentando estar al día con las nuevas tecnologías.
+
+    Hoy agradezco al equipo de XAcademy y a la fundación Santex por esta oportunidad, tanto de aprender y reforzar mis conocimientos, como así también poder obtener un certificado de tan prestigiosas entidades. 
+
+    Para este challenge mi intención fue entregar lo que se solicita en las consignas, junto con los puntos extras, pero además hacerlo de la manera más optima posible, tanto en tiempo como en calidad. Cual si fuese un desarrollo para un potencial cliente. 
 
 ## Plan de desarrollo
 
-Habiendo leido la consiga completa junto con los puntos extras, definí un camino para ir cumpliendo todos los pasos. Los cuales son los siguientes:
+    Habiendo leido la consiga completa junto con los puntos extras, definí un camino para ir cumpliendo todos los pasos. Los cuales son los siguientes:
 
 ## Servicios
 
@@ -77,3 +81,6 @@ Habiendo leido la consiga completa junto con los puntos extras, definí un camin
     5 - Permitir a la pagínación cargar diferentes cantidades de filas, 20, 50, 100, 200.
 
 ## VIDEO DE DEMOSTRACIÓN
+
+    https://www.loom.com/share/93a9f40009bb441d92482837e309810a
+    
